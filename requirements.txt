@@ -1,0 +1,16 @@
+Django==2.0.6
+djongo==1.2.29
+falcon==1.4.1
+google-auth==1.5.0
+google-oauth==1.0.1
+djangorestframework==3.8.2
+gunicorn==19.8.1
+virtualenv==16.0.0
+pycrypto==2.6.1
+passlib==1.7.1
+djangorestframework-jwt==1.11.0
+requests==2.19.1
+whitenoise==3.3.1
+Pillow==5.1.0
+opencv-python==3.4.1.15
+opencv-contrib-python==3.4.1.15

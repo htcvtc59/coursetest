@@ -1,0 +1,184 @@
+{% extends 'layout.html' %}
+
+{% load static from staticfiles %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="text-center" id="appsignin">
+            <form class="form-signin" @submit="onSubmit" v-if="signin">
+                {% csrf_token %}
+
+                <h1 class="h3 mb-3 font-weight-normal">Vui lòng đăng nhập!</h1>
+
+                <div class="blogspacesign">
+                    <p v-if="errors.length">
+                        <b-alert variant="danger"
+                                 dismissible
+                                 fade
+                                 :show="showDismissibleAlert"
+                                 @dismissed="showDismissibleAlert=false"
+                                 v-for="error in errors" :key="error">
+                            ${ error }
+                        </b-alert>
+                    </p>
+                </div>
+
+                <div class="blogspacesign">
+
+                    <b-form-input type="text"
+                                  placeholder="Tên đăng nhập"
+                                  v-model.trim="username"
+                                  :state="usernameState"
+                                  aria-describedby="inputLiveFeedbackUser"
+                    ></b-form-input>
+                    <b-form-invalid-feedback id="inputLiveFeedbackUser">
+                        Tên đăng nhập không được để trống
+                    </b-form-invalid-feedback>
+                </div>
+                <div class="blogspacesign">
+                    <b-form-input type="password"
+                                  placeholder="Mật khẩu"
+                                  v-model="password"
+                                  :state="passwordState"
+                                  aria-describedby="inputLiveFeedbackPass"
+                    ></b-form-input>
+
+                    <b-form-invalid-feedback id="inputLiveFeedbackPass">
+                        Mật khẩu không được để trống
+                    </b-form-invalid-feedback>
+
+                </div>
+
+                <div class="blogspacesign" id="g-recaptchasignin"></div>
+                <b-button type="submit" variant="btn btn-lg btn-primary btn-block">Đăng nhập</b-button>
+
+
+                <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
+            </form>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+
+
+        var verifyCallback = function (response) {
+            return response;
+        };
+        var onloadCallback = function () {
+
+            grecaptcha.render('g-recaptchasignin', {
+                'sitekey': '6Lds6jMUAAAAABrHcq9B2lgBPb9mTGsFzF52RGqO',
+                'callback': verifyCallback,
+                'theme': 'light'
+            });
+        };
+
+        new Vue({
+            delimiters: ['${', '}'],
+            el: '#appsignin',
+            computed: {
+                usernameState() {
+                    return this.username.length > 2 ? true : false
+                },
+                passwordState() {
+                    return this.password.length > 2 ? true : false
+                }
+            },
+            data() {
+                return {
+                    username: '',
+                    password: '',
+                    errors: [],
+                    showDismissibleAlert: false,
+                    show: true,
+                    signin: true,
+                    sessionuid: ''
+                }
+            },
+            created() {
+                this.sessionuid = '{{  request.session.uid  }}';
+                if (this.sessionuid.length > 0 && this.sessionuid !== 'signout'
+                    && ('{{  request.session.role  }}' !== 'ADMIN' || '{{  request.session.role  }}' !== 'TEACHER')) {
+                    this.signin = false;
+                    window.location.href = '/app/';
+                } else {
+                    this.signin = true;
+                }
+            },
+            methods: {
+                onSubmit(evt) {
+                    evt.preventDefault();
+
+                    var vm = this;
+
+                    var response = grecaptcha.getResponse();
+
+                    vm.errors = [];
+                    vm.errors.splice(0);
+
+
+                    if (!response) {
+                        vm.errors.push('Invalid reCaptcha');
+                        vm.showDismissibleAlert = true;
+                    }
+
+                    {#&& response#}
+                    if (this.username && this.password) {
+                        {#console.log(response);#}
+
+
+                        axios({
+                            method: 'post',
+                            url: '/signin/',
+                            data: {
+                                username: this.username,
+                                password: this.password
+                            },
+                            xsrfCookieName: 'csrftoken',
+                            xsrfHeaderName: 'X-CSRFToken',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                            },
+                        }).then(function (response) {
+                                if (response.data === "signed") {
+                                    vm.sessionuid = '{{  request.session.uid  }}';
+                                    if (vm.sessionuid.length > 0) {
+                                        window.location.href = '/app/';
+
+                                    } else {
+                                        window.location.href = '/';
+                                    }
+                                    vm.errors.splice(0);
+                                }
+                                console.log(response.data);
+                                if (response.data === "signedteacher") {
+                                    vm.sessionuid = '{{  request.session.uid  }}';
+                                    if (vm.sessionuid.length > 0) {
+                                        window.location.href = '/mainpage/';
+
+                                    } else {
+                                        window.location.href = '/';
+                                    }
+                                    vm.errors.splice(0);
+                                }
+                            }
+                        );
+
+                        return true;
+                    }
+                },
+
+            }
+        });
+    </script>
+
+
+{% endblock %}
+

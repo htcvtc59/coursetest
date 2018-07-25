@@ -1,0 +1,633 @@
+{% extends 'layoutapp.html' %}
+{% load static from staticfiles %}
+
+
+{% block title %}
+
+    Dashboard
+{% endblock %}
+
+{% block contentapp %}
+
+    <link href="{% static 'assest/datepicker/vue-datepicker-local.css' %}" rel="stylesheet">
+    <script src="{% static 'assest/datepicker/moment.js' %}"></script>
+
+    <div class="row" id="appstudentinfo">
+        <div class="card-body">
+
+            <b-card no-body>
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- modal add data -->
+                        <b-btn v-b-modal.modallgstudentsinfo variant="primary"><i
+                                class="fa fa-plus"></i></b-btn>
+                        <b-modal id="modallgstudentsinfo" ref="modallgStudentsInfoRef" size="lg" title="Thêm mới"
+                                 hide-footer>
+                            <div class="col-md-12">
+                                <b-form @submit="onSubmitInfo">
+                                    {% csrf_token %}
+
+                                    <b-form-group id="exStudentInfo1"
+                                                  label="Họ và tên:"
+                                                  label-for="exstudentinfo1">
+                                        <b-form-input id="exstudentinfo1"
+                                                      type="text"
+                                                      v-model="form.fullname"
+                                                      placeholder="Họ và tên">
+                                        </b-form-input>
+                                    </b-form-group>
+
+
+                                    <b-form-group id="exStudentInfo2"
+                                                  label="Quê quán:"
+                                                  label-for="exstudentinfo2">
+                                        <b-form-input id="exstudentinfo2"
+                                                      type="text"
+                                                      v-model="form.hometown"
+                                                      placeholder="Quê quán">
+                                        </b-form-input>
+                                    </b-form-group>
+
+                                    <label for="exStudentInfo3">Ngày sinh:</label>
+                                    <div id="exStudentInfo3">
+                                        <vue-datepicker-local v-model="form.birthday" format="YYYY-MM-DD"
+                                                              :local="local"></vue-datepicker-local>
+                                    </div>
+
+
+                                    <b-form-group id="exStudentInfo4"
+                                                  label="Trường học:"
+                                                  label-for="exstudentinfo4">
+                                        <b-form-input id="exstudentinfo4"
+                                                      type="text"
+                                                      v-model="form.school"
+                                                      placeholder="Trường học">
+                                        </b-form-input>
+                                    </b-form-group>
+
+                                    <label for="exStudentInfo5">Thời gian tốt nghiệp:</label>
+                                    <div id="exStudentInfo5">
+                                        <vue-datepicker-local v-model="form.graduationtime" format="YYYY-MM-DD"
+                                                              :local="local"></vue-datepicker-local>
+                                    </div>
+
+                                    <b-form-group id="exStudentInfo6"
+                                                  label="Ảnh cá nhân:"
+                                                  label-for="exstudentinfo6">
+                                        <b-form-file v-if="!form.face"
+                                                     id="exstudentinfo6"
+
+                                                     type="file" :state="Boolean(form.face)"
+                                                     @change="onFileChangeInfo"
+                                                     placeholder="Chọn ảnh..."></b-form-file>
+                                        <div v-else class="col-md-4">
+                                            <img :src="form.face" class="rounded" width="75" height="75"/>
+                                            <button @click="removeImageInfo" class="btn btn-sm btn-primary">Xoá
+                                                ảnh
+                                            </button>
+                                        </div>
+                                    </b-form-group>
+
+                                    <b-form-group id="exStudentInfo7"
+                                                  label="Email:"
+                                                  label-for="exstudentinfo7">
+                                        <b-form-input id="exstudentinfo7"
+                                                      type="email"
+                                                      v-model="form.email"
+                                                      placeholder="Email">
+                                        </b-form-input>
+                                    </b-form-group>
+
+                                    <b-form-group id="exStudentInfo8"
+                                                  label="Di động:"
+                                                  label-for="exstudentinfo8">
+                                        <b-form-input id="exstudentinfo8"
+                                                      type="text"
+                                                      v-model="form.phone"
+                                                      placeholder="Di động">
+                                        </b-form-input>
+                                    </b-form-group>
+
+                                    <b-form-group id="exStudentInfo9"
+                                                  label="Tên tài khoản:"
+                                                  label-for="exstudentinfo9">
+                                        <b-form-input id="exstudentinfo9"
+                                                      type="text"
+                                                      v-model="form.accountcode"
+                                                      placeholder="Tên tài khoản">
+                                        </b-form-input>
+                                    </b-form-group>
+
+                                    <b-button id="addstudentinfo" type="submit" class="px-5" variant="primary">
+                                        Lưu
+                                    </b-button>
+
+                                </b-form>
+                            </div>
+                        </b-modal>
+
+                    </div>
+
+                    <div class="col-md-12">
+
+                        <b-modal id="modallgstudentviewinfo" ref="modallgstudentviewInfoRef" size="lg" title="Chi tiết"
+                                 hide-footer>
+                            <div class="col-md-12">
+                                <b-form @submit="onViewInfo">
+                                    {% csrf_token %}
+
+                                    <b-form-group id="exStudentInfo1v"
+                                                  label="Họ và tên:"
+                                                  label-for="exstudentinfo1v">
+                                        <b-form-input id="exstudentinfo1v"
+                                                      type="text"
+                                                      v-model="formv.fullname"
+                                                      placeholder="Họ và tên">
+                                        </b-form-input>
+                                    </b-form-group>
+
+
+                                    <b-form-group id="exStudentInfo2v"
+                                                  label="Quê quán:"
+                                                  label-for="exstudentinfo2v">
+                                        <b-form-input id="exstudentinfo2v"
+                                                      type="text"
+                                                      v-model="formv.hometown"
+                                                      placeholder="Quê quán">
+                                        </b-form-input>
+                                    </b-form-group>
+
+                                    <label for="exStudentInfo3v">Ngày sinh:</label>
+                                    <div id="exStudentInfo3v">
+                                        <vue-datepicker-local v-model="formv.birthday" format="YYYY-MM-DD"
+                                                              :local="local"></vue-datepicker-local>
+                                    </div>
+
+
+                                    <b-form-group id="exStudentInfo4v"
+                                                  label="Trường học:"
+                                                  label-for="exstudentinfo4v">
+                                        <b-form-input id="exstudentinfo4v"
+                                                      type="text"
+                                                      v-model="formv.school"
+                                                      placeholder="Trường học">
+                                        </b-form-input>
+                                    </b-form-group>
+
+                                    <label for="exStudentInfo5v">Thời gian tốt nghiệp:</label>
+                                    <div id="exStudentInfo5v">
+                                        <vue-datepicker-local v-model="formv.graduationtime" format="YYYY-MM-DD"
+                                                              :local="local"></vue-datepicker-local>
+                                    </div>
+
+                                    <b-form-group id="exStudentInfo6v"
+                                                  label="Ảnh cá nhân:"
+                                                  label-for="exstudentinfo6v">
+                                        <b-form-file v-if="!formv.face"
+                                                     id="exstudentinfo6v"
+
+                                                     type="file" :state="Boolean(formv.face)"
+                                                     @change="onFileChangeInfov"
+                                                     placeholder="Chọn ảnh..."></b-form-file>
+                                        <div v-else class="col-md-4">
+                                            <img :src="formv.face" class="rounded" width="75" height="75"/>
+                                            <button @click="removeImageInfov" class="btn btn-sm btn-primary">Xoá
+                                                ảnh
+                                            </button>
+                                        </div>
+                                    </b-form-group>
+
+                                    <b-form-group id="exStudentInfo7v"
+                                                  label="Email:"
+                                                  label-for="exstudentinfo7v">
+                                        <b-form-input id="exstudentinfo7v"
+                                                      type="email"
+                                                      v-model="formv.email"
+                                                      placeholder="Email">
+                                        </b-form-input>
+                                    </b-form-group>
+
+                                    <b-form-group id="exStudentInfo8v"
+                                                  label="Di động:"
+                                                  label-for="exstudentinfo8v">
+                                        <b-form-input id="exstudentinfo8"
+                                                      type="text"
+                                                      v-model="formv.phone"
+                                                      placeholder="Di động">
+                                        </b-form-input>
+                                    </b-form-group>
+
+                                    <b-form-group id="exStudentInfo9v"
+                                                  label="Tên tài khoản:"
+                                                  label-for="exstudentinfo9v">
+                                        <b-form-input id="exstudentinfo9v"
+                                                      type="text"
+                                                      v-model="formv.accountcode"
+                                                      placeholder="Tên tài khoản">
+                                        </b-form-input>
+                                    </b-form-group>
+
+                                    <b-button type="button" @click="onvUpdate" class="px-5" variant="primary">
+                                        Lưu
+                                    </b-button>
+                                    <b-button @click="onvDelete" id="vdeletestudentinfo" type="button"
+                                              class="px-5" variant="danger">
+                                        Xoá
+                                    </b-button>
+
+                                </b-form>
+                            </div>
+                        </b-modal>
+
+
+                    </div>
+
+
+                    <div class="col-md-12 my-4">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTableStudentInfo" width="100%"
+                                   cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Họ và Tên</th>
+                                    <th>Quê quán</th>
+                                    <th>Ngày sinh</th>
+                                    <th>Trường</th>
+                                    <th>TG tốt nghiệp</th>
+                                    <th>Ảnh</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% if datastudentinfo %}
+                                    {% for s in datastudentinfo %}
+                                        <tr>
+                                            <td>{{ s.fullname }}</td>
+                                            <td>{{ s.hometown }}</td>
+                                            <td>{{ s.birthday }}</td>
+                                            <td>{{ s.school }}</td>
+                                            <td>{{ s.graduationtime }}</td>
+                                            <td><img src="/media/{{ s.face }}" height="50" width="50"></td>
+                                            <td>{{ s.email }}</td>
+                                            <td>{{ s.phone }}</td>
+                                            <td>{{ s.createdate }}</td>
+                                            <td>
+                                                {% if s.status == True %}
+                                                    <button class="btn btn-sm btn-success"><i
+                                                            class="fa fa-check"></i></button>
+                                                {% else %}
+                                                    <button class="btn btn-sm btn-danger"><i
+                                                            class="fa fa-times"></i>
+                                                    </button>
+                                                {% endif %}
+
+                                            </td>
+                                            <td>{{ s.accountcode }}</td>
+                                            <td>{{ s.id }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
+            </b-card>
+
+        </div>
+    </div>
+
+    <script src="{% static 'assest/datepicker/vue-datepicker-local.js' %}"></script>
+
+
+    <script>
+
+        var vmt = new Vue({
+            delimiter: ['${', '}'],
+            el: '#appstudentinfo',
+            data() {
+                return {
+                    form: {
+                        fullname: '',
+                        hometown: '',
+                        birthday: new Date(),
+                        school: '',
+                        graduationtime: new Date(),
+                        face: null,
+                        email: '',
+                        phone: '',
+                        accountcode: '',
+                        namefile: ''
+                    },
+                    formv: {
+                        fullname: '',
+                        hometown: '',
+                        birthday: new Date(),
+                        school: '',
+                        graduationtime: new Date(),
+                        face: null,
+                        email: '',
+                        phone: '',
+                        accountcode: '',
+                        namefile: '',
+                        idrow: '',
+                        changeimage: false,
+                        changebirthday: false,
+                        changegraduationtime: false
+                    },
+                    time: new Date(),
+                    range: [new Date(), new Date()],
+                    emptyTime: '',
+                    emptyRange: [],
+                    local: {
+                        dow: 0,
+                        hourTip: 'Select Hour',
+                        minuteTip: 'Select Minute',
+                        secondTip: 'Select Second',
+                        yearSuffix: '',
+                        monthsHead: 'Tháng1_Tháng2_Tháng3_Tháng4_Tháng5_Tháng6_Tháng7_Tháng8_Tháng9_Tháng10_Tháng11_Tháng12'.split('_'),
+                        months: 'T1_T2_T3_T4_T5_T6_T7_T8_T9_T10_T11_T12'.split('_'),
+                        weeks: 'CN_T2_T3_T4_T5_T6_T7'.split('_'),
+                        cancelTip: 'cancel',
+                        submitTip: 'confirm'
+                    },
+                }
+            },
+            methods: {
+                onFileChangeInfo(e) {
+                    e.preventDefault();
+                    let files = e.target.files[0];
+                    let reader = new FileReader();
+                    var vm = this;
+                    reader.readAsDataURL(files);
+                    reader.onload = e => {
+                        vm.form.face = e.target.result;
+                    };
+
+                    vm.form.namefile = files.name;
+
+                },
+                removeImageInfo(e) {
+                    e.preventDefault();
+                    this.form.face = '';
+                },
+                onSubmitInfo(evt, datatable) {
+                    evt.preventDefault();
+
+                    var vm = this;
+
+                    axios({
+                        method: 'post',
+                        url: '/app/appstudentinfo/create/',
+                        data: JSON.stringify(this.form),
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded charset=UTF-8;'
+                        },
+                    }).then(function (response) {
+                        console.log(response.data);
+                        if (response.status === 200) {
+
+                            var status = null;
+                            if (response.data.status == true) {
+                                status = '<button class="btn btn-sm btn-success">' +
+                                    '<i class="fa fa-check"></i></button>';
+                            } else {
+                                status = '<button class="btn btn-sm btn-danger">' +
+                                    '<i class="fa fa-times"></i></button>';
+                            }
+
+                            datatable.row.add([
+                                response.data.fullname,
+                                response.data.hometown,
+                                response.data.birthday,
+                                response.data.school,
+                                response.data.graduationtime,
+                                '<img src="/media/' + response.data.face + '" height="50" width="50">',
+                                response.data.email,
+                                response.data.phone,
+                                response.data.createdate,
+                                status,
+                                response.data.accountcode,
+                                response.data.id,
+                            ]).draw(false);
+
+                            vm.$refs.modallgStudentsInfoRef.hide();
+
+                            vm.form.fullname = '';
+                            vm.form.hometown = '';
+                            vm.form.birthday = new Date();
+                            vm.form.school = '';
+                            vm.form.graduationtime = new Date();
+                            vm.form.face = null;
+                            vm.form.email = '';
+                            vm.form.phone = '';
+                            vm.form.accountcode = '';
+                            vm.form.namefile = '';
+                        }
+
+
+                    });
+                },
+                onFileChangeInfov(e) {
+                    e.preventDefault();
+                    let files = e.target.files[0];
+                    let reader = new FileReader();
+                    var vm = this;
+                    reader.readAsDataURL(files);
+                    reader.onload = e => {
+                        vm.formv.face = e.target.result;
+                    };
+
+                    vm.formv.namefile = files.name;
+                    vm.formv.changeimage = true;
+
+                },
+                removeImageInfov(e) {
+                    e.preventDefault();
+                    this.formv.face = '';
+                },
+                onViewInfo(evt, datatable) {
+                    evt.preventDefault();
+                    var vm = this;
+                    vm.$refs.modallgstudentviewInfoRef.show();
+
+
+                    vm.formv.fullname = datatable[0];
+                    vm.formv.hometown = datatable[1];
+                    vm.formv.birthday = datatable[2];
+                    vm.formv.school = datatable[3];
+                    vm.formv.graduationtime = datatable[4];
+                    vm.formv.face = $(datatable[5]).attr('src');
+                    vm.formv.email = datatable[6];
+                    vm.formv.phone = datatable[7];
+                    vm.formv.createdate = '';
+                    vm.formv.accountcode = datatable[10];
+                    vm.formv.namefile = vm.formv.face;
+                    vm.formv.idrow = datatable[11];
+                    vm.formv.changeimage = false;
+
+
+                    var blob = null;
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", vm.formv.face, true);
+                    xhr.responseType = "blob";
+                    xhr.onreadystatechange = function (e) {
+                        blob = xhr.response;
+                        if (blob) {
+                            let reader = new FileReader();
+                            reader.readAsDataURL(blob);
+                            reader.onload = e => {
+                                vm.formv.face = e.target.result;
+                            }
+                        }
+                    }
+                    xhr.send();
+
+                },
+                onvUpdate() {
+                    var vm = this;
+
+                    if (moment(vm.formv.birthday)._f === undefined) {
+                        vm.formv.changebirthday = true;
+                    }
+
+                    if (moment(vm.formv.graduationtime)._f === undefined) {
+                        vm.formv.changegraduationtime = true;
+                    }
+
+                    axios({
+                        method: 'post',
+                        url: '/app/appstudentinfo/update/',
+                        data: JSON.stringify(vm.formv),
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200) {
+                            vm.$refs.modallgstudentviewInfoRef.hide();
+                            vm.formv.changebirthday = false;
+                            vm.formv.changegraduationtime = false;
+                            window.location.href = '/app/students/';
+                        }
+                    });
+
+
+                },
+                onvDelete() {
+
+                    var vm = this;
+                    if (vm.formv.idrow) {
+
+                        axios({
+                            method: 'post',
+                            url: '/app/appstudentinfo/delete/',
+                            data: {
+                                idrow: vm.formv.idrow
+                            },
+                            xsrfCookieName: 'csrftoken',
+                            xsrfHeaderName: 'X-CSRFToken',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            },
+                        }).then(function (response) {
+                            if (response.status === 200) {
+                                vm.$refs.modallgstudentviewInfoRef.hide();
+                            }
+
+                        });
+
+                    }
+
+                },
+
+            }
+        });
+
+        $(document).ready(function () {
+
+            var tbstudentinfo = $("#dataTableStudentInfo").DataTable({
+                "pagingType": "full_numbers",
+                "language": {
+                    "decimal": "",
+                    "emptyTable": "Không có dữ liệu trong bảng !",
+                    "info": "Bản ghi từ _START_ đến _END_ của _TOTAL_ số bản ghi",
+                    "infoEmpty": "Showing 0 to 0 of 0 entries",
+                    "infoFiltered": "(tìm thấy từ _MAX_ số bản ghi)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Hiển thị _MENU_ bản ghi",
+                    "loadingRecords": "Loading...",
+                    "processing": "Processing...",
+                    "search": "Tìm kiếm:",
+                    "zeroRecords": "Không có bản ghi nào !",
+                    "paginate": {
+                        "first": "Đầu tiên",
+                        "last": "Cuối cùng",
+                        "next": "Tiếp theo",
+                        "previous": "Trở lại"
+                    },
+                    "aria": {
+                        "sortAscending": ": activate to sort column ascending",
+                        "sortDescending": ": activate to sort column descending"
+                    }
+                },
+                "columnDefs": [
+                    {targets: [8, 10, 11], visible: false}
+                ],
+                responsive: true,
+                "scrollX": true
+            });
+
+            $('#dataTableStudentInfo tbody').on('click', 'tr', function (e) {
+                var data = tbstudentinfo.row(this).data();
+
+                vmt.onViewInfo(e, tbstudentinfo.row(this).data());
+            });
+
+            $('#addstudentinfo').on('click', function (e) {
+                vmt.onSubmitInfo(e, tbstudentinfo);
+            });
+
+            $('#dataTableStudentInfo tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    tbstudentinfo.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+
+            $('#vdeletestudentinfo').click(function () {
+                tbstudentinfo.row('.selected').remove().draw(false);
+            });
+
+
+        });
+
+
+    </script>
+
+
+
+
+{% endblock %}

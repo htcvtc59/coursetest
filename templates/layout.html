@@ -1,0 +1,63 @@
+<!doctype html>
+
+{% load static from staticfiles %}
+
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="{% static 'icon/favicon.ico' %}">
+
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assest/bootstrap/css/bootstrap.min.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap-vue.min.css' %}">
+
+    <script src="{% static 'vue/vue.js' %}"></script>
+
+    <script src="{% static 'bootstrap/js/polyfill.min.js' %}"></script>
+
+    <script src="{% static 'bootstrap/js/bootstrap-vue.min.js' %}"></script>
+
+    <script src="{% static 'axios/axios.min.js' %}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assest/vendor/signin.css' %}">
+
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+            async defer>
+    </script>
+
+</head>
+<body>
+
+{% block content %}
+
+{% endblock %}
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="{% static 'assest/bootstrap/js/jquery-3.3.1.slim.min.js' %}"></script>
+<script src="{% static 'assest/bootstrap/js/popper.min.js' %}"></script>
+<script src="{% static 'assest/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assest/vendor/holder.min.js' %}"></script>
+
+<script>
+    Holder.addTheme('thumb', {
+        bg: '#55595c',
+        fg: '#eceeef',
+        text: 'Thumbnail'
+    });
+</script>
+
+</body>
+</html>

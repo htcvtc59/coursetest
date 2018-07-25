@@ -1,0 +1,983 @@
+{% extends 'layoutapp.html' %}
+{% load static from staticfiles %}
+
+
+{% block title %}
+
+    Dashboard
+{% endblock %}
+
+{% block contentapp %}
+
+    {% csrf_token %}
+
+    <div class="row" id="appmainuser">
+        <div class="card-body">
+
+            <b-card no-body>
+                <b-tabs pills card>
+                    <b-tab title="Học viên" active>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- modal add data -->
+                                <b-btn v-b-modal.modallgstudent variant="primary"><i
+                                        class="fa fa-plus"></i></b-btn>
+                                <b-modal id="modallgstudent" ref="modallgstudentRef" size="lg" title="Thêm mới"
+                                         hide-footer>
+                                    <div class="col-md-12">
+                                        <b-form @submit="onSubmitSt">
+                                            {% csrf_token %}
+                                            <b-form-group id="exGstudent1"
+                                                          label="Tên đăng nhập:"
+                                                          label-for="exstudent1">
+                                                <b-form-input id="exstudent1"
+                                                              type="text"
+                                                              v-model="formst.username"
+                                                              placeholder="Tên đăng nhập">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGstudent2"
+                                                          label="Ảnh:"
+                                                          label-for="exstudent2">
+                                                <b-form-file v-if="!formst.image"
+                                                             id="exstudent2"
+
+                                                             type="file" :state="Boolean(formst.image)"
+                                                             @change="onFileChangeSt"
+                                                             placeholder="Chọn ảnh..."></b-form-file>
+                                                <div v-else class="col-md-4">
+                                                    <img :src="formst.image" class="rounded" width="75" height="75"/>
+                                                    <button @click="removeImageSt" class="btn btn-sm btn-primary">Xoá
+                                                        ảnh
+                                                    </button>
+                                                </div>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGstudent3"
+                                                          label="Họ và tên:"
+                                                          label-for="exstudent3">
+                                                <b-form-input id="exstudent3"
+                                                              type="text"
+                                                              v-model="formst.fullname"
+                                                              placeholder="Họ và tên">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGstudent4"
+                                                          label="Email:"
+                                                          label-for="exstudent4">
+                                                <b-form-input id="exstudent4"
+                                                              type="email"
+                                                              v-model="formst.email"
+                                                              placeholder="Email">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGstudent5"
+                                                          label="Mật khẩu:"
+                                                          label-for="exstudent5">
+                                                <b-form-input id="exstudent5"
+                                                              type="password"
+                                                              v-model="formst.password"
+                                                              placeholder="Mật khẩu">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-button id="addnewstudent" type="submit" class="px-5" variant="primary">
+                                                Lưu
+                                            </b-button>
+
+                                        </b-form>
+                                    </div>
+                                </b-modal>
+
+                            </div>
+
+                            <div class="col-md-12">
+
+                                <b-modal id="modallgstudentview" ref="modallgstudentviewRef" size="lg" title="Chi tiết"
+                                         hide-footer>
+                                    <div class="col-md-12">
+                                        <b-form @submit="onViewDSt">
+                                            {% csrf_token %}
+                                            <b-form-group id="exGroupvSt1"
+                                                          label="Tên đăng nhập:"
+                                                          label-for="exvSt1">
+                                                <b-form-input id="exvSt1"
+                                                              type="text"
+                                                              v-model="formvst.username"
+                                                              placeholder="Tên đăng nhập">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGroupvSt2"
+                                                          label="Ảnh:"
+                                                          label-for="exvSt2">
+                                                <b-form-file v-if="!formvst.image"
+                                                             id="exvSt2"
+
+                                                             type="file" :state="Boolean(formvst.image)"
+                                                             @change="onFileChangevSt"
+                                                             placeholder="Chọn ảnh..."></b-form-file>
+                                                <div v-else class="col-md-4">
+                                                    <img :src="formvst.image" class="rounded" width="75" height="75"/>
+                                                    <b-button @click="removeImagevSt" type="button" variant="primary">
+                                                        Xoá
+                                                        ảnh
+                                                    </b-button>
+                                                </div>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGroupvSt3"
+                                                          label="Họ và tên:"
+                                                          label-for="exvSt3">
+                                                <b-form-input id="exvSt3"
+                                                              type="text"
+                                                              v-model="formvst.fullname"
+                                                              placeholder="Họ và tên">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGroupvSt4"
+                                                          label="Email:"
+                                                          label-for="exvSt4">
+                                                <b-form-input id="exvSt4"
+                                                              type="email"
+                                                              v-model="formvst.email"
+                                                              placeholder="Email">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGroupvSt5"
+                                                          label="Mật khẩu:"
+                                                          label-for="exvSt5">
+                                                <b-form-input id="exvSt5" v-show="formvst.changepass"
+                                                              type="password"
+                                                              v-model="formvst.password"
+                                                              placeholder="Mật khẩu">
+                                                </b-form-input>
+                                                <b-input-group-append>
+                                                    <b-btn variant="primary" @click="showpassvSt">Sửa</b-btn>
+                                                </b-input-group-append>
+                                            </b-form-group>
+
+                                            <b-button type="button" @click="onvUpdateSt" class="px-5" variant="primary">
+                                                Lưu
+                                            </b-button>
+                                            <b-button @click="onvDeleteSt" id="vdeletestudentbtn" type="button"
+                                                      class="px-5" variant="danger">
+                                                Xoá
+                                            </b-button>
+
+                                        </b-form>
+                                    </div>
+                                </b-modal>
+
+
+                            </div>
+
+
+                            <div class="col-md-12 my-4" id="appdbstudent">
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTableStudent" width="100%"
+                                           cellspacing="0">
+                                        <thead>
+                                        <tr>
+                                            <th>Tên tài khoản</th>
+                                            <th>Loại tài khoản</th>
+                                            <th>Ảnh hiển thị</th>
+                                            <th>Họ và Tên</th>
+                                            <th>Email</th>
+                                            <th>Ngày tạo</th>
+                                            <th>Trạng thái</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        {% if datastudent %}
+                                            {% for s in datastudent %}
+                                                <tr>
+                                                    <td>{{ s.name }}</td>
+                                                    <td>{{ s.rolename }}</td>
+                                                    <td><img src="{{ s.image }}" height="50" width="50"></td>
+                                                    <td>{{ s.infofullname }}</td>
+                                                    <td>{{ s.infoname }}</td>
+                                                    <td>{{ s.createdate }}</td>
+                                                    <td>
+                                                        {% if s.status == True %}
+                                                            <button class="btn btn-sm btn-success"><i
+                                                                    class="fa fa-check"></i></button>
+                                                        {% else %}
+                                                            <button class="btn btn-sm btn-danger"><i
+                                                                    class="fa fa-times"></i>
+                                                            </button>
+                                                        {% endif %}
+
+                                                    </td>
+                                                    <td>{{ s.id }}</td>
+                                                    <td>{{ s.roleid }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </b-tab>
+                    <b-tab title="Giảng viên">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- modal add data -->
+                                <b-btn v-b-modal.modallgteacher variant="primary"><i
+                                        class="fa fa-plus"></i></b-btn>
+                                <b-modal id="modallgteacher" ref="modallgteacherRef" size="lg" title="Thêm mới"
+                                         hide-footer>
+                                    <div class="col-md-12">
+                                        <b-form @submit="onSubmit">
+                                            {% csrf_token %}
+                                            <b-form-group id="exampleInputGroup1"
+                                                          label="Tên đăng nhập:"
+                                                          label-for="exampleInput1">
+                                                <b-form-input id="exampleInput1"
+                                                              type="text"
+                                                              v-model="form.username"
+                                                              placeholder="Tên đăng nhập">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exampleInputGroup2"
+                                                          label="Ảnh:"
+                                                          label-for="exampleInput2">
+                                                <b-form-file v-if="!form.image"
+                                                             id="exampleInput2"
+
+                                                             type="file" :state="Boolean(form.image)"
+                                                             @change="onFileChange"
+                                                             placeholder="Chọn ảnh..."></b-form-file>
+                                                <div v-else class="col-md-4">
+                                                    <img :src="form.image" class="rounded" width="75" height="75"/>
+                                                    <button @click="removeImage" class="btn btn-sm btn-primary">Xoá ảnh
+                                                    </button>
+                                                </div>
+                                            </b-form-group>
+
+                                            <b-form-group id="exampleInputGroup3"
+                                                          label="Họ và tên:"
+                                                          label-for="exampleInput3">
+                                                <b-form-input id="exampleInput3"
+                                                              type="text"
+                                                              v-model="form.fullname"
+                                                              placeholder="Họ và tên">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exampleInputGroup4"
+                                                          label="Email:"
+                                                          label-for="exampleInput4">
+                                                <b-form-input id="exampleInput4"
+                                                              type="email"
+                                                              v-model="form.email"
+                                                              placeholder="Email">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exampleInputGroup5"
+                                                          label="Mật khẩu:"
+                                                          label-for="exampleInput5">
+                                                <b-form-input id="exampleInput5"
+                                                              type="password"
+                                                              v-model="form.password"
+                                                              placeholder="Mật khẩu">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-button id="addnewteacher" type="submit" class="px-5" variant="primary">
+                                                Lưu
+                                            </b-button>
+
+                                        </b-form>
+                                    </div>
+                                </b-modal>
+
+
+                            </div>
+
+                            <div class="col-md-12">
+
+                                <b-modal id="modallgteacherview" ref="modallgteacherviewRef" size="lg" title="Chi tiết"
+                                         hide-footer>
+                                    <div class="col-md-12">
+                                        <b-form @submit="onViewD">
+                                            {% csrf_token %}
+                                            <b-form-group id="exGroupv1"
+                                                          label="Tên đăng nhập:"
+                                                          label-for="exv1">
+                                                <b-form-input id="exv1"
+                                                              type="text"
+                                                              v-model="formv.username"
+                                                              placeholder="Tên đăng nhập">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGroupv2"
+                                                          label="Ảnh:"
+                                                          label-for="exv2">
+                                                <b-form-file v-if="!formv.image"
+                                                             id="exv2"
+
+                                                             type="file" :state="Boolean(formv.image)"
+                                                             @change="onFileChangev"
+                                                             placeholder="Chọn ảnh..."></b-form-file>
+                                                <div v-else class="col-md-4">
+                                                    <img :src="formv.image" class="rounded" width="75" height="75"/>
+                                                    <b-button @click="removeImagev" type="button" variant="primary">Xoá
+                                                        ảnh
+                                                    </b-button>
+                                                </div>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGroupv3"
+                                                          label="Họ và tên:"
+                                                          label-for="exv3">
+                                                <b-form-input id="exv3"
+                                                              type="text"
+                                                              v-model="formv.fullname"
+                                                              placeholder="Họ và tên">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGroupv4"
+                                                          label="Email:"
+                                                          label-for="exv4">
+                                                <b-form-input id="exv4"
+                                                              type="email"
+                                                              v-model="formv.email"
+                                                              placeholder="Email">
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="exGroupv5"
+                                                          label="Mật khẩu:"
+                                                          label-for="exv5">
+                                                <b-form-input id="exv5" v-show="formv.changepass"
+                                                              type="password"
+                                                              v-model="formv.password"
+                                                              placeholder="Mật khẩu">
+                                                </b-form-input>
+                                                <b-input-group-append>
+                                                    <b-btn variant="primary" @click="showpassv">Sửa</b-btn>
+                                                </b-input-group-append>
+                                            </b-form-group>
+
+                                            <b-button type="button" @click="onvUpdate" class="px-5" variant="primary">
+                                                Lưu
+                                            </b-button>
+                                            <b-button @click="onvDelete" id="vdeleteteacherbtn" type="button"
+                                                      class="px-5" variant="danger">
+                                                Xoá
+                                            </b-button>
+
+                                        </b-form>
+                                    </div>
+                                </b-modal>
+
+
+                            </div>
+
+                            <div class="col-md-12 my-4" id="appdbteacher">
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTableTeacher" width="100%"
+                                           cellspacing="0">
+                                        <thead>
+                                        <tr>
+                                            <th>Tên tài khoản</th>
+                                            <th>Loại tài khoản</th>
+                                            <th>Ảnh hiển thị</th>
+                                            <th>Họ và Tên</th>
+                                            <th>Email</th>
+                                            <th>Ngày tạo</th>
+                                            <th>Trạng thái</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        {% if datateacher %}
+                                            {% for t in datateacher %}
+                                                <tr>
+                                                    <td>{{ t.name }}</td>
+                                                    <td>{{ t.rolename }}</td>
+                                                    <td><img src="{{ t.image }}" height="50" width="50"></td>
+                                                    <td>{{ t.infofullname }}</td>
+                                                    <td>{{ t.infoname }}</td>
+                                                    <td>{{ t.createdate }}</td>
+                                                    <td>
+                                                        {% if t.status == True %}
+                                                            <button class="btn btn-sm btn-success"><i
+                                                                    class="fa fa-check"></i></button>
+                                                        {% else %}
+                                                            <button class="btn btn-sm btn-danger"><i
+                                                                    class="fa fa-times"></i>
+                                                            </button>
+                                                        {% endif %}
+
+                                                    </td>
+                                                    <td>{{ t.id }}</td>
+                                                    <td>{{ t.roleid }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </b-tab>
+                </b-tabs>
+            </b-card>
+
+        </div>
+    </div>
+
+    <script>
+
+        var vmt = new Vue({
+            delimiter: ['${', '}'],
+            el: '#appmainuser',
+            data() {
+                return {
+                    form: {
+                        username: '',
+                        image: null,
+                        fullname: '',
+                        email: '',
+                        password: '',
+                        namefile: ''
+                    },
+                    formv: {
+                        username: '',
+                        image: null,
+                        fullname: '',
+                        email: '',
+                        password: '',
+                        namefile: '',
+                        changepass: false,
+                        idrow: '',
+                        changeimage: false
+                    },
+                    formst: {
+                        username: '',
+                        image: null,
+                        fullname: '',
+                        email: '',
+                        password: '',
+                        namefile: ''
+                    },
+                    formvst: {
+                        username: '',
+                        image: null,
+                        fullname: '',
+                        email: '',
+                        password: '',
+                        namefile: '',
+                        changepass: false,
+                        idrow: '',
+                        changeimage: false
+                    }
+                }
+            },
+            methods: {
+                onFileChange(e) {
+                    e.preventDefault();
+                    let files = e.target.files[0];
+                    let reader = new FileReader();
+                    var vm = this;
+                    reader.readAsDataURL(files);
+                    reader.onload = e => {
+                        vm.form.image = e.target.result;
+                    };
+
+                    vm.form.namefile = files.name;
+
+                },
+                removeImage(e) {
+                    e.preventDefault();
+                    this.form.image = '';
+                },
+                onSubmit(evt, datatable) {
+                    evt.preventDefault();
+
+                    var vm = this;
+
+                    axios({
+                        method: 'post',
+                        url: '/app/appteacher/create/',
+                        data: JSON.stringify(this.form),
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded charset=UTF-8;'
+                        },
+                    }).then(function (response) {
+                        console.log(response.data);
+                        if (response.data) {
+
+                            var status = null;
+                            if (response.data.status == true) {
+                                status = '<button class="btn btn-sm btn-success">' +
+                                    '<i class="fa fa-check"></i></button>';
+                            } else {
+                                status = '<button class="btn btn-sm btn-danger">' +
+                                    '<i class="fa fa-times"></i></button>';
+                            }
+
+                            datatable.row.add([
+                                response.data.name,
+                                response.data.rolename,
+                                '<img src="' + response.data.image + '" height="50" width="50">',
+                                response.data.infofullname,
+                                response.data.infoname,
+                                response.data.createdate,
+                                status,
+                                response.data.id,
+                                response.data.roleid
+                            ]).draw(false);
+
+                            vm.$refs.modallgteacherRef.hide();
+
+                            vm.form.username = '';
+                            vm.form.image = null;
+                            vm.form.fullname = '';
+                            vm.form.email = '';
+                            vm.form.password = '';
+                            vm.form.namefile = '';
+                        }
+
+
+                    });
+                },
+                onFileChangev(e) {
+                    e.preventDefault();
+                    let files = e.target.files[0];
+                    let reader = new FileReader();
+                    var vm = this;
+                    reader.readAsDataURL(files);
+                    reader.onload = e => {
+                        vm.formv.image = e.target.result;
+                    };
+
+                    vm.formv.namefile = files.name;
+                    vm.formv.changeimage = true;
+
+                },
+                removeImagev(e) {
+                    e.preventDefault();
+                    this.formv.image = '';
+                },
+                showpassv() {
+                    this.formv.changepass = !this.formv.changepass;
+                },
+                onViewD(evt, datatable) {
+                    evt.preventDefault();
+                    var vm = this;
+                    vm.$refs.modallgteacherviewRef.show();
+
+                    vm.formv.username = datatable[0];
+                    vm.formv.image = $(datatable[2]).attr('src');
+                    vm.formv.fullname = datatable[3];
+                    vm.formv.email = datatable[4];
+                    vm.formv.password = '';
+                    vm.formv.namefile = vm.formv.image;
+                    vm.formv.idrow = datatable[7];
+                    vm.formv.changeimage = false;
+
+
+                    var blob = null;
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", vm.formv.image, true);
+                    xhr.responseType = "blob";
+                    xhr.onreadystatechange = function (e) {
+                        blob = xhr.response;
+                        if (blob) {
+                            let reader = new FileReader();
+                            reader.readAsDataURL(blob);
+                            reader.onload = e => {
+                                vm.formv.image = e.target.result;
+                            }
+                        }
+                    }
+                    xhr.send();
+
+                },
+                onvUpdate() {
+                    var vm = this;
+
+                    axios({
+                        method: 'post',
+                        url: '/app/appteacher/update/',
+                        data: JSON.stringify(vm.formv),
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200) {
+                            vm.$refs.modallgteacherviewRef.hide();
+                            vm.formv.changepass = false;
+                            window.location.href = '/app/users/';
+                        }
+
+                    });
+
+                },
+                onvDelete() {
+
+                    var vm = this;
+                    if (vm.formv.idrow) {
+
+                        axios({
+                            method: 'post',
+                            url: '/app/appteacher/delete/',
+                            data: {
+                                idrow: vm.formv.idrow
+                            },
+                            xsrfCookieName: 'csrftoken',
+                            xsrfHeaderName: 'X-CSRFToken',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            },
+                        }).then(function (response) {
+                            if (response.status === 200) {
+                                vm.$refs.modallgteacherviewRef.hide();
+                            }
+
+                        });
+
+                    }
+
+                },
+                onFileChangeSt(e) {
+                    e.preventDefault();
+                    let files = e.target.files[0];
+                    let reader = new FileReader();
+                    var vm = this;
+                    reader.readAsDataURL(files);
+                    reader.onload = e => {
+                        vm.formst.image = e.target.result;
+                    };
+
+                    vm.formst.namefile = files.name;
+
+                },
+                removeImageSt(e) {
+                    e.preventDefault();
+                    this.formst.image = '';
+                },
+                onSubmitSt(evt, datatable) {
+
+                    evt.preventDefault();
+
+                    var vm = this;
+
+                    axios({
+                        method: 'post',
+                        url: '/app/appstudent/create/',
+                        data: JSON.stringify(this.formst),
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded charset=UTF-8;'
+                        },
+                    }).then(function (response) {
+                        console.log(response.data);
+                        if (response.data) {
+
+                            var status = null;
+                            if (response.data.status == true) {
+                                status = '<button class="btn btn-sm btn-success">' +
+                                    '<i class="fa fa-check"></i></button>';
+                            } else {
+                                status = '<button class="btn btn-sm btn-danger">' +
+                                    '<i class="fa fa-times"></i></button>';
+                            }
+
+                            datatable.row.add([
+                                response.data.name,
+                                response.data.rolename,
+                                '<img src="' + response.data.image + '" height="50" width="50">',
+                                response.data.infofullname,
+                                response.data.infoname,
+                                response.data.createdate,
+                                status,
+                                response.data.id,
+                                response.data.roleid
+                            ]).draw(false);
+
+                            vm.$refs.modallgstudentRef.hide();
+
+                            vm.formst.username = '';
+                            vm.formst.image = null;
+                            vm.formst.fullname = '';
+                            vm.formst.email = '';
+                            vm.formst.password = '';
+                            vm.formst.namefile = '';
+                        }
+
+                    });
+
+
+                },
+                onFileChangevSt(e) {
+                    e.preventDefault();
+                    let files = e.target.files[0];
+                    let reader = new FileReader();
+                    var vm = this;
+                    reader.readAsDataURL(files);
+                    reader.onload = e => {
+                        vm.formvst.image = e.target.result;
+                    };
+
+                    vm.formvst.namefile = files.name;
+                    vm.formvst.changeimage = true;
+                },
+                removeImagevSt(e){
+                    e.preventDefault();
+                    this.formvst.image = '';
+                },
+                showpassvSt() {
+                    this.formvst.changepass = !this.formvst.changepass;
+                },
+                onViewDSt(evt, datatable) {
+                    evt.preventDefault();
+                    var vm = this;
+                    vm.$refs.modallgstudentviewRef.show();
+
+                    vm.formvst.username = datatable[0];
+                    vm.formvst.image = $(datatable[2]).attr('src');
+                    vm.formvst.fullname = datatable[3];
+                    vm.formvst.email = datatable[4];
+                    vm.formvst.password = '';
+                    vm.formvst.namefile = vm.formvst.image;
+                    vm.formvst.idrow = datatable[7];
+                    vm.formvst.changeimage = false;
+
+
+                    var blob = null;
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", vm.formvst.image, true);
+                    xhr.responseType = "blob";
+                    xhr.onreadystatechange = function (e) {
+                        blob = xhr.response;
+                        if (blob) {
+                            let reader = new FileReader();
+                            reader.readAsDataURL(blob);
+                            reader.onload = e => {
+                                vm.formvst.image = e.target.result;
+                            }
+                        }
+                    }
+                    xhr.send();
+
+
+                },
+                onvUpdateSt() {
+                    var vm = this;
+
+                    axios({
+                        method: 'post',
+                        url: '/app/appstudent/update/',
+                        data: JSON.stringify(vm.formvst),
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200) {
+                            vm.$refs.modallgstudentviewRef.hide();
+                            vm.formvst.changepass = false;
+                            window.location.href = '/app/users/';
+                        }
+
+                    });
+                },
+                onvDeleteSt() {
+
+                    var vm = this;
+                    if (vm.formvst.idrow) {
+
+                        axios({
+                            method: 'post',
+                            url: '/app/appstudent/delete/',
+                            data: {
+                                idrow: vm.formvst.idrow
+                            },
+                            xsrfCookieName: 'csrftoken',
+                            xsrfHeaderName: 'X-CSRFToken',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            },
+                        }).then(function (response) {
+                            if (response.status === 200) {
+                                vm.$refs.modallgstudentviewRef.hide();
+                            }
+
+                        });
+
+                    }
+
+                }
+
+            }
+        });
+
+        $(document).ready(function () {
+
+            var tbteacher = $("#dataTableTeacher").DataTable({
+                "pagingType": "full_numbers",
+                "language": {
+                    "decimal": "",
+                    "emptyTable": "Không có dữ liệu trong bảng !",
+                    "info": "Bản ghi từ _START_ đến _END_ của _TOTAL_ số bản ghi",
+                    "infoEmpty": "Showing 0 to 0 of 0 entries",
+                    "infoFiltered": "(tìm thấy từ _MAX_ số bản ghi)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Hiển thị _MENU_ bản ghi",
+                    "loadingRecords": "Loading...",
+                    "processing": "Processing...",
+                    "search": "Tìm kiếm:",
+                    "zeroRecords": "Không có bản ghi nào !",
+                    "paginate": {
+                        "first": "Đầu tiên",
+                        "last": "Cuối cùng",
+                        "next": "Tiếp theo",
+                        "previous": "Trở lại"
+                    },
+                    "aria": {
+                        "sortAscending": ": activate to sort column ascending",
+                        "sortDescending": ": activate to sort column descending"
+                    }
+                },
+                "columnDefs": [
+                    {targets: [0, 2, 3, 4, 5, 6], width: "20%"},
+                    {targets: [1, 7, 8], visible: false}
+                ]
+            });
+
+            $('#dataTableTeacher tbody').on('click', 'tr', function (e) {
+                var data = tbteacher.row(this).data();
+                {#alert('You clicked on ' + data[7] + '\'s row');#}
+
+                vmt.onViewD(e, tbteacher.row(this).data());
+            });
+
+            $('#addnewteacher').on('click', function (e) {
+                vmt.onSubmit(e, tbteacher);
+            });
+
+            $('#dataTableTeacher tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    tbteacher.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+
+            $('#vdeleteteacherbtn').click(function () {
+                tbteacher.row('.selected').remove().draw(false);
+            });
+
+
+
+            var tbstudent = $("#dataTableStudent").DataTable({
+                "pagingType": "full_numbers",
+                "language": {
+                    "decimal": "",
+                    "emptyTable": "Không có dữ liệu trong bảng !",
+                    "info": "Bản ghi từ _START_ đến _END_ của _TOTAL_ số bản ghi",
+                    "infoEmpty": "Showing 0 to 0 of 0 entries",
+                    "infoFiltered": "(tìm thấy từ _MAX_ số bản ghi)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Hiển thị _MENU_ bản ghi",
+                    "loadingRecords": "Loading...",
+                    "processing": "Processing...",
+                    "search": "Tìm kiếm:",
+                    "zeroRecords": "Không có bản ghi nào !",
+                    "paginate": {
+                        "first": "Đầu tiên",
+                        "last": "Cuối cùng",
+                        "next": "Tiếp theo",
+                        "previous": "Trở lại"
+                    },
+                    "aria": {
+                        "sortAscending": ": activate to sort column ascending",
+                        "sortDescending": ": activate to sort column descending"
+                    }
+                },
+                "columnDefs": [
+                    {targets: [0, 2, 3, 4, 5, 6], width: "20%"},
+                    {targets: [1, 7, 8], visible: false}
+                ]
+            });
+            $('#dataTableStudent tbody').on('click', 'tr', function (e) {
+                var data = tbstudent.row(this).data();
+                vmt.onViewDSt(e, tbstudent.row(this).data());
+            });
+
+            $('#addnewstudent').on('click', function (e) {
+                vmt.onSubmitSt(e, tbstudent);
+            });
+
+            $('#dataTableStudent tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    tbstudent.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+
+            $('#vdeletestudentbtn').click(function () {
+                tbstudent.row('.selected').remove().draw(false);
+            });
+
+        });
+
+
+    </script>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,305 @@
+{% extends 'layoutapp.html' %}
+{% load static from staticfiles %}
+
+
+{% block title %}
+
+    Category
+{% endblock %}
+
+{% block contentapp %}
+
+    {% csrf_token %}
+    <style xmlns:v-on="http://www.w3.org/1999/xhtml">
+        body {
+            font-family: Menlo, Consolas, monospace;
+            color: #444;
+        }
+
+        .item {
+            cursor: pointer;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        ul {
+            padding-left: 1em;
+            line-height: 1.5em;
+            list-style-type: dot;
+        }
+
+        .menuapp {
+
+        }
+    </style>
+
+
+    <div class="card col-md-12 mb-3" style="min-height: 80rem;" id="appcategory">
+        <div class="row">
+            <div class="col-md-5">
+
+                <div class="menuapp p-3">
+                    <script type="text/x-template" id="item-template">
+                        <li>
+                            <div v-b-modal.modalPreventDelete
+                                 :class="{bold: isFolder}"
+                                 @click="viewItem(model)"
+                            >
+                                ${ model.name }
+                            </div>
+                            <ul v-show="open" v-if="isFolder">
+                                <item
+                                        class="item"
+                                        v-for="(model, index) in model.children"
+                                        :key="index"
+                                        :model="model">
+                                </item>
+                            </ul>
+
+                        </li>
+                    </script>
+
+                    <ul>
+                        <item
+                                class="item"
+                                :model="treeData">
+                        </item>
+                    </ul>
+
+                    <b-modal id="modalPreventDelete" ref="modalDeleteRef" hide-footer title="Xoá"
+                             size="sm">
+                        <div class="d-block text-center">
+                            <h3>Bạn có muốn xoá không !</h3>
+                        </div>
+                        <b-btn class="mt-2" variant="outline-danger" @click="viewDelete" block>Xoá
+                        </b-btn>
+                    </b-modal>
+
+                </div>
+
+
+            </div>
+
+            <div class="col-md-7 p-2">
+
+                <b-form @submit="onSubmitCategory">
+                    <b-form-group id="cateInGroup"
+                                  label="Tên danh mục:"
+                                  label-for="categoryInput">
+                        <b-form-input id="categoryInput"
+                                      type="text"
+                                      v-model="form.namecourse"
+                                      placeholder="Nhập tên danh mục">
+                        </b-form-input>
+                    </b-form-group>
+
+                    <div class="ml-4">
+                        <b-button type="button" size="sm my-3" variant="primary" @click="addSubCourse">
+                            <i class="fa fa-plus"></i>
+                            Danh mục con
+                        </b-button>
+
+
+                        <b-input-group v-for="(subname,index) in form.subcourse">
+                            <b-form-input type="text"
+                                          v-model="subname.namesubcourse"
+                                          placeholder="Tên danh mục con"></b-form-input>
+                            <b-input-group-append>
+                                <b-btn type="button" size="sm" variant="outline-danger" @click="deleteSubCourse(index)">
+                                    <i class="fa fa-times"></i></b-btn>
+                            </b-input-group-append>
+                        </b-input-group>
+
+                    </div>
+
+                    <b-button type="submit" size="sm my-3" variant="primary">
+                        <i class="fa fa-plus"></i>
+                        Thêm mới
+                    </b-button>
+
+                </b-form>
+
+
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+    <script>
+
+        // demo data
+        var data = {
+            children: []
+        }
+
+
+        const itemid = new Vue();
+
+        Vue.component('item', {
+            delimiters: ['${', '}'],
+            template: '#item-template',
+            props: {
+                model: Object
+            },
+            data: function () {
+                return {
+                    open: true,
+                    id: '',
+                }
+            },
+            computed: {
+                isFolder: function () {
+                    return this.model.children &&
+                        this.model.children.length
+                }
+            },
+            methods: {
+                toggle: function () {
+                    if (this.isFolder) {
+                        this.open = !this.open
+                    }
+                },
+                changeType: function () {
+                    if (!this.isFolder) {
+                        Vue.set(this.model, 'children', [])
+                        this.addChild()
+                        this.open = true
+                    }
+                },
+                addChild: function () {
+                    this.model.children.push({
+                        name: 'Thêm mới'
+                    })
+                },
+                viewItem(e) {
+                    var vm = this;
+                    if (e.children) {
+                        console.log('root');
+                        vm.id = e.id;
+                        itemid.$emit('event_child', e.id);
+                    } else {
+                        console.log('notroot');
+                    }
+                }
+            }
+        });
+
+
+        new Vue({
+            delimiter: ['${', '}'],
+            el: '#appcategory',
+            data() {
+                return {
+                    treeData: data,
+                    form: {
+                        namecourse: '',
+                        subcourse: []
+                    },
+                    idi: ''
+                }
+            },
+            created() {
+                var vm = this;
+                axios({
+                    method: 'post',
+                    url: '/app/category/getdata/',
+                    data: '',
+                    xsrfCookieName: 'csrftoken',
+                    xsrfHeaderName: 'X-CSRFToken',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    },
+                }).then(function (response) {
+                    if (response.status === 200) {
+                        response.data.filter((val) => {
+                            vm.treeData.children.push(val);
+                        });
+                    }
+                });
+
+                itemid.$on('event_child', function (id) {
+                    vm.idi = id;
+                });
+            },
+            methods: {
+                onSubmitCategory(e) {
+                    e.preventDefault();
+                    var vm = this;
+
+                    axios({
+                        method: 'post',
+                        url: '/app/category/create/',
+                        data: JSON.stringify(vm.form),
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200) {
+                            console.log(response);
+                            vm.treeData.children.push(response.data);
+                        }
+                    });
+
+                },
+                addSubCourse() {
+                    this.form.subcourse.push({
+                        namesubcourse: ''
+                    });
+                },
+                deleteSubCourse(index) {
+                    this.form.subcourse.splice(index, 1);
+                },
+                viewDelete() {
+                    var vm = this;
+                    console.log(vm.idi);
+
+                    if (vm.idi.length > 0) {
+
+                        axios({
+                            method: 'post',
+                            url: '/app/category/delete/',
+                            data: {
+                                pk: vm.idi
+                            },
+                            xsrfCookieName: 'csrftoken',
+                            xsrfHeaderName: 'X-CSRFToken',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            },
+                        }).then(function (response) {
+                            if (response.status === 200) {
+
+                                vm.treeData.children.filter((val,index) => {
+                                    if (val.id === vm.idi) {
+                                        vm.treeData.children.splice(index, 1);
+                                    }
+                                });
+
+                                vm.$refs.modalDeleteRef.hide();
+                            }
+                        });
+
+                    }
+
+                }
+            }
+        });
+
+
+    </script>
+
+
+
+
+{% endblock %}
