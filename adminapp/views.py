@@ -755,15 +755,52 @@ def adminstudentsdelete(request):
 
 # course
 @ensure_csrf_cookie
-def createcourse(request, subname):
+def createcourse(request):
     try:
-        if request.method == 'GET':
-            print(subname)
-            return render(request=request, template_name='course.html', context={"categorycourse": subname});
-            # return HttpResponse(content="", content_type="application/json",
-            #                     status=200)
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            namecourse = dict_keys.get('name')
+            coursecode = dict_keys.get('coursecode')
+            startdate = dict_keys.get('startdate')
+            enddate = dict_keys.get('enddate')
+            imagecourse = dict_keys.get('image')
+            namefile = dict_keys.get('namefile')
+            teacher = dict_keys.get('teachervalue')
+            categorycourse = dict_keys.get('catecourse')
+            tname = teacher['name']
+            tidteacher = teacher['idteacher']
+
+            formatd, imgstr = imagecourse.split(';base64,')
+            ext = formatd.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name=namefile)
+
+            # save file image and get path
+
+            link = "course/%02d/%02d/%02d" % (
+                datetime.today().year, datetime.today().month, datetime.today().day)
+
+            fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, link)
+                                   , base_url=os.path.join(settings.MEDIA_ROOT, link))
+            filename = fs.save(data.name, data)
+
+            resstartdate = datetime.strptime(startdate, "%Y-%m-%dT%H:%M:%S.%fZ")
+            strstartdate = '%02d-%02d-%02d' % (resstartdate.year, resstartdate.month, resstartdate.day)
+
+            resenddate = datetime.strptime(enddate, "%Y-%m-%dT%H:%M:%S.%fZ")
+            strenddate = '%02d-%02d-%02d' % (resenddate.year, resenddate.month, resenddate.day)
+
+            obteacher = Teacher(fullname=tname, account=tidteacher)
+            course = Course(namecourse=namecourse, startdate=strstartdate, enddate=strenddate,
+                            imagecourse=os.path.join(link, filename),
+                            teacher=obteacher, coursecode=coursecode, categorycourse=categorycourse)
+
+            course.save()
+
+            rescourse = course.getallc()
+
+            return HttpResponse(content=json.dumps(rescourse), content_type="application/json", status=200)
     except Exception:
-        pass
+        return HttpResponse(content="", content_type="application/json", status=200)
 
 
 @ensure_csrf_cookie

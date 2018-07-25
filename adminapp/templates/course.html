@@ -243,7 +243,7 @@
                         image: null,
                         namefile: '',
                         teachervalue: null,
-                        catecourse:'{{ categorycourse }}'
+                        catecourse: '{{ categorycourse }}'
 
                     },
                     time: new Date(),
@@ -288,7 +288,6 @@
                             });
 
                         });
-
                     }
                 });
 
@@ -315,6 +314,35 @@
                 onSubmitCourse(e) {
                     e.preventDefault();
                     console.log(JSON.stringify(this.form));
+                    var vm = this;
+
+                    axios({
+                        method: 'post',
+                        url: '/app/appcourse/create/',
+                        data: JSON.stringify(vm.form),
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200) {
+                            console.log(response.data);
+                            vm.$refs.modalappcourseRef.hide();
+
+
+                        }
+                    });
+
+                    vm.form.name = '';
+                    vm.form.coursecode = '';
+                    vm.form.startdate = new Date();
+                    vm.form.enddate = new Date();
+                    vm.form.image = null;
+                    vm.form.namefile = '';
+                    vm.form.teachervalue = null;
+
 
                 },
                 disabledDate(time) {
