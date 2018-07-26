@@ -7,15 +7,18 @@
 {% endblock %}
 
 {% block contentapp %}
+
     <link href="{% static 'assest/datepicker/vue-datepicker-local.css' %}" rel="stylesheet">
     <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
     <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
+    <script src="{% static 'assest/datepicker/moment.js' %}"></script>
+
     {% csrf_token %}
 
     <div class="col-md-12" id="appcoursemain" style="min-height: 80rem;">
         <div class="row">
             <div class="col-md-12">
-                <div class="card m-3" style="min-height: 15rem;">
+                <div class="m-3">
 
                     <b-button v-b-modal.modalappcoursecreated size="md" class="col-md-2" variant="primary">Tạo khoá học
                     </b-button>
@@ -86,133 +89,83 @@
                     </b-modal>
 
                 </div>
+
+            </div>
+
+            <div class="col-md-12" style="min-height: 13rem;">
+                <div class="col-md-6 mx-auto">
+                    <b-form-input v-model="search.namesearch"
+                                  type="text"
+                                  placeholder="Tên khoá học..."></b-form-input>
+
+                    <b-button size="md" variant="primary" @click="onShowHideDate">
+                        ${ !showdatetime ? 'Hiện' : 'Ẩn' }
+                    </b-button>
+
+                    <div v-if="showdatetime">
+                        <label for="searchstartdate">Từ ngày :</label>
+                        <div id="searchstartdate">
+                            <vue-datepicker-local v-model="search.startdate"
+                                                  :local="local"></vue-datepicker-local>
+                        </div>
+
+                        <label for="searchenddate">Đến ngày :</label>
+                        <div id="searchenddate">
+                            <vue-datepicker-local v-model="search.enddate"
+                                                  :local="local"></vue-datepicker-local>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="col-md-6 mx-auto m-3">
+                    <b-button size="md" variant="primary" @click="onSearchC">
+                        Tìm kiếm
+                    </b-button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="row" v-if="listdatacourse.length">
+
+            <div class="col-md-6" v-for="c in listdatacourse">
+                <div class="card flex-md-row mb-4 box-shadow h-md-250">
+                    <div class="card-body d-flex flex-column align-items-start">
+                        <strong class="d-inline-block mb-2"
+                                :class="{'text-danger': c.statuscourse!=='Đang hoạt động',
+                                 'text-primary': c.statuscourse==='Đang hoạt động' }">${ c.statuscourse }
+                        </strong>
+                        <h3 class="mb-0">
+                            <a class="text-dark" href="#">${ c.namecourse }</a>
+                        </h3>
+                        <div class="mb-1 text-muted">${ c.startdate } - ${ c.enddate }</div>
+                        <p class="card-text mb-auto">Giảng viên hỗ trợ ${ c.teacherfullname }</p>
+
+                        <a href="#">Chi tiết</a>
+                    </div>
+                    <img class="card-img-right flex-auto d-none d-lg-block" :src="`/media/${ c.imagecourse }`"
+                         height="250" width="230"
+                         alt="Card image cap">
+                </div>
             </div>
 
         </div>
+
+
         <div class="row">
-
-            <div class="col-md-6">
-                <div class="card flex-md-row mb-4 box-shadow h-md-250">
-                    <div class="card-body d-flex flex-column align-items-start">
-                        <strong class="d-inline-block mb-2 text-primary">World</strong>
-                        <h3 class="mb-0">
-                            <a class="text-dark" href="#">Featured post</a>
-                        </h3>
-                        <div class="mb-1 text-muted">Nov 12</div>
-                        <p class="card-text mb-auto">This is a wider card with supporting text below as a natural
-                            lead-in to additional content.</p>
-                        <a href="#">Continue reading</a>
-                    </div>
-                    <img class="card-img-right flex-auto d-none d-lg-block" src="http://placekitten.com/380/200"
-                         height="250" width="200"
-                         alt="Card image cap">
-                </div>
+            <div class="col-md-12">
+                <b-pagination size="md" v-bind:total-rows="totalrows" align="center"
+                              v-model="currentPage" v-bind:per-page="perpage"
+                              @change="loadchangePagination"
+                              @input="loadinputPagination">
+                </b-pagination>
             </div>
-            <div class="col-md-6">
-                <div class="card flex-md-row mb-4 box-shadow h-md-250">
-                    <div class="card-body d-flex flex-column align-items-start">
-                        <strong class="d-inline-block mb-2 text-danger">World</strong>
-                        <h3 class="mb-0">
-                            <a class="text-dark" href="#">Featured post</a>
-                        </h3>
-                        <div class="mb-1 text-muted">Nov 12</div>
-                        <p class="card-text mb-auto">This is a wider card with supporting text below as a natural
-                            lead-in to additional content.</p>
-                        <a href="#">Continue reading</a>
-                    </div>
-                    <img class="card-img-right flex-auto d-none d-lg-block" src="http://placekitten.com/380/200"
-                         height="250" width="200"
-                         alt="Card image cap">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card flex-md-row mb-4 box-shadow h-md-250">
-                    <div class="card-body d-flex flex-column align-items-start">
-                        <strong class="d-inline-block mb-2 text-primary">World</strong>
-                        <h3 class="mb-0">
-                            <a class="text-dark" href="#">Featured post</a>
-                        </h3>
-                        <div class="mb-1 text-muted">Nov 12</div>
-                        <p class="card-text mb-auto">This is a wider card with supporting text below as a natural
-                            lead-in to additional content.</p>
-                        <a href="#">Continue reading</a>
-                    </div>
-                    <img class="card-img-right flex-auto d-none d-lg-block" src="http://placekitten.com/380/200"
-                         height="250" width="200"
-                         alt="Card image cap">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card flex-md-row mb-4 box-shadow h-md-250">
-                    <div class="card-body d-flex flex-column align-items-start">
-                        <strong class="d-inline-block mb-2 text-danger">World</strong>
-                        <h3 class="mb-0">
-                            <a class="text-dark" href="#">Featured post</a>
-                        </h3>
-                        <div class="mb-1 text-muted">Nov 12</div>
-                        <p class="card-text mb-auto">This is a wider card with supporting text below as a natural
-                            lead-in to additional content.</p>
-                        <a href="#">Continue reading</a>
-                    </div>
-                    <img class="card-img-right flex-auto d-none d-lg-block" src="http://placekitten.com/380/200"
-                         height="250" width="200"
-                         alt="Card image cap">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card flex-md-row mb-4 box-shadow h-md-250">
-                    <div class="card-body d-flex flex-column align-items-start">
-                        <strong class="d-inline-block mb-2 text-primary">World</strong>
-                        <h3 class="mb-0">
-                            <a class="text-dark" href="#">Featured post</a>
-                        </h3>
-                        <div class="mb-1 text-muted">Nov 12</div>
-                        <p class="card-text mb-auto">This is a wider card with supporting text below as a natural
-                            lead-in to additional content.</p>
-                        <a href="#">Continue reading</a>
-                    </div>
-                    <img class="card-img-right flex-auto d-none d-lg-block" src="http://placekitten.com/380/200"
-                         height="250" width="200"
-                         alt="Card image cap">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card flex-md-row mb-4 box-shadow h-md-250">
-                    <div class="card-body d-flex flex-column align-items-start">
-                        <strong class="d-inline-block mb-2 text-primary">World</strong>
-                        <h3 class="mb-0">
-                            <a class="text-dark" href="#">Featured post</a>
-                        </h3>
-                        <div class="mb-1 text-muted">Nov 12</div>
-                        <p class="card-text mb-auto">This is a wider card with supporting text below as a natural
-                            lead-in to additional content.</p>
-                        <a href="#">Continue reading</a>
-                    </div>
-                    <img class="card-img-right flex-auto d-none d-lg-block" src="http://placekitten.com/380/200"
-                         height="250" width="200"
-                         alt="Card image cap">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card flex-md-row mb-4 box-shadow h-md-250">
-                    <div class="card-body d-flex flex-column align-items-start">
-                        <strong class="d-inline-block mb-2 text-primary">World</strong>
-                        <h3 class="mb-0">
-                            <a class="text-dark" href="#">Featured post</a>
-                        </h3>
-                        <div class="mb-1 text-muted">Nov 12</div>
-                        <p class="card-text mb-auto">This is a wider card with supporting text below as a natural
-                            lead-in to additional content.</p>
-                        <a href="#">Continue reading</a>
-                    </div>
-                    <img class="card-img-right flex-auto d-none d-lg-block" src="http://placekitten.com/380/200"
-                         height="250" width="200"
-                         alt="Card image cap">
-                </div>
-            </div>
-
-
         </div>
+
+
     </div>
 
 
@@ -231,7 +184,7 @@
         Vue.component('vue-multiselect', window.VueMultiselect.default);
 
         new Vue({
-            delimiter: ['${', '}'],
+            delimiters: ['${', '}'],
             el: '#appcoursemain',
             data() {
                 return {
@@ -262,12 +215,23 @@
                         cancelTip: 'cancel',
                         submitTip: 'confirm'
                     },
-                    options: []
+                    options: [],
+                    listdatacourse: [],
+                    currentPage: 1,
+                    totalrows: null,
+                    perpage: 10,
+                    search: {
+                        namesearch: '',
+                        startdate: null,
+                        enddate: null,
+                        catecourse: '{{ categorycourse }}',
+                    },
+                    showdatetime: false,
 
                 }
             },
             created() {
-                console.log('start');
+
                 var vm = this;
                 axios({
                     method: 'post',
@@ -288,6 +252,65 @@
                             });
 
                         });
+                    }
+                });
+
+
+                axios({
+                    method: 'post',
+                    url: '/app/appcourse/getallpagination/',
+                    data: {
+                        catecourse: vm.search.catecourse,
+                        perpage: vm.perpage,
+                        currentPage: vm.currentPage,
+                        namesearch: vm.search.namesearch,
+
+                    },
+                    xsrfCookieName: 'csrftoken',
+                    xsrfHeaderName: 'X-CSRFToken',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    },
+                }).then(function (response) {
+                    if (response.status === 200) {
+                        console.log(response.data);
+                        vm.totalrows = response.data.total;
+                        datares = response.data.data;
+
+                        datares.forEach((val, index) => {
+                            var id = val.id;
+                            var namecourse = val.namecourse;
+                            var imagecourse = val.imagecourse;
+                            var enddate = moment(val.enddate).format("DD-MM-YYYY");
+                            var startdate = moment(val.startdate).format("DD-MM-YYYY");
+                            var student = val.student;
+                            var teacheraccount = val.teacher.account;
+                            var teacherfullname = val.teacher.fullname;
+                            var datenow = moment(new Date()).format("DD-MM-YYYY");
+                            var statuscourse = null;
+
+                            if (enddate > datenow) {
+                                statuscourse = 'Đang hoạt động';
+                            } else {
+                                statuscourse = 'Đã kết thúc';
+                            }
+
+                            result = {
+                                id: id,
+                                namecourse: namecourse,
+                                imagecourse: imagecourse,
+                                enddate: enddate,
+                                startdate: startdate,
+                                student: student,
+                                teacheraccount: teacheraccount,
+                                teacherfullname: teacherfullname,
+                                statuscourse: statuscourse,
+                            };
+
+                            vm.listdatacourse.push(result);
+                        });
+                        console.log(vm.listdatacourse);
                     }
                 });
 
@@ -332,24 +355,290 @@
                             vm.$refs.modalappcourseRef.hide();
 
 
+                            vm.form.name = '';
+                            vm.form.coursecode = '';
+                            vm.form.startdate = new Date();
+                            vm.form.enddate = new Date();
+                            vm.form.image = null;
+                            vm.form.namefile = '';
+                            vm.form.teachervalue = null;
                         }
                     });
-
-                    vm.form.name = '';
-                    vm.form.coursecode = '';
-                    vm.form.startdate = new Date();
-                    vm.form.enddate = new Date();
-                    vm.form.image = null;
-                    vm.form.namefile = '';
-                    vm.form.teachervalue = null;
 
 
                 },
                 disabledDate(time) {
                     var day = time.getDay();
                     return day === 0 || day === 6;
+                },
+                loadinputPagination(e) {
+
+
+                },
+                loadchangePagination(e) {
+                    if (this.showdatetime === true) {
+                        var startdate = moment(this.search.startdate).format("YYYY-MM-DD");
+                        var enddate = moment(this.search.enddate).format("YYYY-MM-DD");
+
+                        var vm = this;
+
+                        vm.listdatacourse = [];
+
+                        axios({
+                            method: 'post',
+                            url: '/app/appcourse/getallpagination/',
+                            data: {
+                                catecourse: vm.search.catecourse,
+                                perpage: vm.perpage,
+                                currentPage: e,
+                                namesearch: vm.search.namesearch,
+                                startdate: startdate,
+                                enddate: enddate,
+                            },
+                            xsrfCookieName: 'csrftoken',
+                            xsrfHeaderName: 'X-CSRFToken',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            },
+                        }).then(function (response) {
+                            if (response.status === 200) {
+                                console.log(response.data);
+                                vm.totalrows = response.data.total;
+                                datares = response.data.data;
+
+                                datares.forEach((val, index) => {
+                                    var id = val.id;
+                                    var namecourse = val.namecourse;
+                                    var imagecourse = val.imagecourse;
+                                    var enddate = moment(val.enddate).format("DD-MM-YYYY");
+                                    var startdate = moment(val.startdate).format("DD-MM-YYYY");
+                                    var student = val.student;
+                                    var teacheraccount = val.teacher.account;
+                                    var teacherfullname = val.teacher.fullname;
+                                    var datenow = moment(new Date()).format("DD-MM-YYYY");
+                                    var statuscourse = null;
+
+                                    if (enddate > datenow) {
+                                        statuscourse = 'Đang hoạt động';
+                                    } else {
+                                        statuscourse = 'Đã kết thúc';
+                                    }
+                                    result = {
+                                        id: id,
+                                        namecourse: namecourse,
+                                        imagecourse: imagecourse,
+                                        enddate: enddate,
+                                        startdate: startdate,
+                                        student: student,
+                                        teacheraccount: teacheraccount,
+                                        teacherfullname: teacherfullname,
+                                        statuscourse: statuscourse,
+                                    };
+
+                                    vm.listdatacourse.push(result);
+                                });
+                            }
+                        });
+
+                    } else {
+                        var vm = this;
+
+                        vm.listdatacourse = [];
+
+                        axios({
+                            method: 'post',
+                            url: '/app/appcourse/getallpagination/',
+                            data: {
+                                catecourse: vm.search.catecourse,
+                                perpage: vm.perpage,
+                                currentPage: e,
+                                namesearch: vm.search.namesearch,
+                            },
+                            xsrfCookieName: 'csrftoken',
+                            xsrfHeaderName: 'X-CSRFToken',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            },
+                        }).then(function (response) {
+                            if (response.status === 200) {
+                                console.log(response.data);
+                                vm.totalrows = response.data.total;
+                                datares = response.data.data;
+
+                                datares.forEach((val, index) => {
+                                    var id = val.id;
+                                    var namecourse = val.namecourse;
+                                    var imagecourse = val.imagecourse;
+                                    var enddate = moment(val.enddate).format("DD-MM-YYYY");
+                                    var startdate = moment(val.startdate).format("DD-MM-YYYY");
+                                    var student = val.student;
+                                    var teacheraccount = val.teacher.account;
+                                    var teacherfullname = val.teacher.fullname;
+                                    var datenow = moment(new Date()).format("DD-MM-YYYY");
+                                    var statuscourse = null;
+
+                                    if (enddate > datenow) {
+                                        statuscourse = 'Đang hoạt động';
+                                    } else {
+                                        statuscourse = 'Đã kết thúc';
+                                    }
+                                    result = {
+                                        id: id,
+                                        namecourse: namecourse,
+                                        imagecourse: imagecourse,
+                                        enddate: enddate,
+                                        startdate: startdate,
+                                        student: student,
+                                        teacheraccount: teacheraccount,
+                                        teacherfullname: teacherfullname,
+                                        statuscourse: statuscourse,
+                                    };
+
+                                    vm.listdatacourse.push(result);
+                                });
+                            }
+                        });
+
+                    }
+
+                },
+                onSearchC() {
+                    if (this.showdatetime === true) {
+                        var startdate = moment(this.search.startdate).format("YYYY-MM-DD");
+                        var enddate = moment(this.search.enddate).format("YYYY-MM-DD");
+
+                        var vm = this;
+
+                        vm.listdatacourse = [];
+
+                        axios({
+                            method: 'post',
+                            url: '/app/appcourse/getallpagination/',
+                            data: {
+                                catecourse: vm.search.catecourse,
+                                namesearch: vm.search.namesearch,
+                                startdate: startdate,
+                                enddate: enddate,
+                                perpage: vm.perpage,
+                                currentPage: vm.currentPage,
+                            },
+                            xsrfCookieName: 'csrftoken',
+                            xsrfHeaderName: 'X-CSRFToken',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            },
+                        }).then(function (response) {
+                            if (response.status === 200) {
+                                console.log(response.data);
+                                vm.totalrows = response.data.total;
+                                datares = response.data.data;
+
+                                datares.forEach((val, index) => {
+                                    var id = val.id;
+                                    var namecourse = val.namecourse;
+                                    var imagecourse = val.imagecourse;
+                                    var enddate = moment(val.enddate).format("DD-MM-YYYY");
+                                    var startdate = moment(val.startdate).format("DD-MM-YYYY");
+                                    var student = val.student;
+                                    var teacheraccount = val.teacher.account;
+                                    var teacherfullname = val.teacher.fullname;
+                                    var datenow = moment(new Date()).format("DD-MM-YYYY");
+                                    var statuscourse = null;
+
+                                    if (enddate > datenow) {
+                                        statuscourse = 'Đang hoạt động';
+                                    } else {
+                                        statuscourse = 'Đã kết thúc';
+                                    }
+                                    result = {
+                                        id: id,
+                                        namecourse: namecourse,
+                                        imagecourse: imagecourse,
+                                        enddate: enddate,
+                                        startdate: startdate,
+                                        student: student,
+                                        teacheraccount: teacheraccount,
+                                        teacherfullname: teacherfullname,
+                                        statuscourse: statuscourse,
+                                    };
+
+                                    vm.listdatacourse.push(result);
+                                });
+                            }
+                        });
+
+                    } else {
+
+                        var vm = this;
+
+                        vm.listdatacourse = [];
+
+                        axios({
+                            method: 'post',
+                            url: '/app/appcourse/getallpagination/',
+                            data: {
+                                catecourse: vm.search.catecourse,
+                                namesearch: vm.search.namesearch,
+                                perpage: vm.perpage,
+                                currentPage: vm.currentPage,
+                            },
+                            xsrfCookieName: 'csrftoken',
+                            xsrfHeaderName: 'X-CSRFToken',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            },
+                        }).then(function (response) {
+                            if (response.status === 200) {
+                                console.log(response.data);
+                                vm.totalrows = response.data.total;
+                                datares = response.data.data;
+
+                                datares.forEach((val, index) => {
+                                    var id = val.id;
+                                    var namecourse = val.namecourse;
+                                    var imagecourse = val.imagecourse;
+                                    var enddate = moment(val.enddate).format("DD-MM-YYYY");
+                                    var startdate = moment(val.startdate).format("DD-MM-YYYY");
+                                    var student = val.student;
+                                    var teacheraccount = val.teacher.account;
+                                    var teacherfullname = val.teacher.fullname;
+                                    var datenow = moment(new Date()).format("DD-MM-YYYY");
+                                    var statuscourse = null;
+
+                                    if (enddate > datenow) {
+                                        statuscourse = 'Đang hoạt động';
+                                    } else {
+                                        statuscourse = 'Đã kết thúc';
+                                    }
+                                    result = {
+                                        id: id,
+                                        namecourse: namecourse,
+                                        imagecourse: imagecourse,
+                                        enddate: enddate,
+                                        startdate: startdate,
+                                        student: student,
+                                        teacheraccount: teacheraccount,
+                                        teacherfullname: teacherfullname,
+                                        statuscourse: statuscourse,
+                                    };
+
+                                    vm.listdatacourse.push(result);
+                                });
+                            }
+                        });
+
+                    }
+                },
+                onShowHideDate(e) {
+                    e.preventDefault();
+                    this.showdatetime = !this.showdatetime;
                 }
-            }
+            },
+
         });
 
     </script>

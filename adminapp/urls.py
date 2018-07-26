@@ -39,6 +39,7 @@ urlpatterns = [
 
     # course
     re_path('^app/appcourse/getall/$', views.adminstudentsgetall, name='adminstudentsgetall'),
+    re_path('^app/appcourse/getallpagination/$', views.coursegetallsearch, name='coursegetallsearch'),
 
     re_path('^app/appcourse/create/$', views.createcourse, name='createcourse'),
     re_path('^app/appcourse/delete/$', views.deletecourse, name='deletecourse'),

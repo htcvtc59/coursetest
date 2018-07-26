@@ -20,6 +20,7 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from passlib.apps import custom_app_context as pwd_context
 from adminapp.models import SubCateCourse, CategoryCourse, Course, Student, CommentUsers, UploadFileUsers, Teacher
+import math
 
 # Create your views here.
 
@@ -823,6 +824,46 @@ def deletecourse(request, subname):
             return render(request=request, template_name='course.html', context={"categorycourse": subname});
             # return HttpResponse(content="", content_type="application/json",
             #                     status=200)
+    except Exception:
+        pass
+
+
+@ensure_csrf_cookie
+def coursegetallsearch(request):
+    try:
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            namecourse = dict_keys.get('catecourse')
+            perpage = dict_keys.get('perpage')
+            currentPage = dict_keys.get('currentPage')
+
+            # search
+            namesearch = dict_keys.get('namesearch')
+            startdate = dict_keys.get('startdate')
+            enddate = dict_keys.get('enddate')
+            # end search
+
+            if not startdate and not enddate:
+                offset = (currentPage - 1) * perpage
+                totaldata = Course.objects.filter(categorycourse__contains=namecourse,namecourse__contains=namesearch).count()
+                rescourse = Course.objects.filter(categorycourse__contains=namecourse,namecourse__contains=namesearch)[offset:offset + perpage]
+                datalist = [val.getall() for val in rescourse]
+                result = json.dumps({"total": totaldata, "data": datalist})
+                return HttpResponse(content=result, content_type="application/json", status=200)
+
+            if startdate and enddate:
+                offset = (currentPage - 1) * perpage
+                totaldata = Course.objects.filter(categorycourse__contains=namecourse,
+                                                  namecourse__contains=namesearch,
+                                                  startdate__gte=startdate,
+                                                  enddate__lte=enddate).count()
+                rescourse = Course.objects.filter(categorycourse__contains=namecourse,
+                                                  namecourse__contains=namesearch,
+                                                  startdate__gte=startdate,
+                                                  enddate__lte=enddate)[offset:offset + perpage]
+                datalist = [val.getall() for val in rescourse]
+                result = json.dumps({"total": totaldata, "data": datalist})
+                return HttpResponse(content=result, content_type="application/json", status=200)
     except Exception:
         pass
 # end course

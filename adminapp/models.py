@@ -145,15 +145,26 @@ class Course(models.Model):
         storage.delete(path)
 
     def getall(self):
-        return {
-            "id": str(self._id),
-            "namecourse": self.namecourse,
-            "startdate": str(self.startdate),
-            "enddate": str(self.enddate),
-            "imagecourse": str(self.imagecourse),
-            "teacher": self.teacher.getall(),
-            "student": [val.getall() for val in self.student]
-        }
+        if self.student:
+            return {
+                "id": str(self._id),
+                "namecourse": self.namecourse,
+                "startdate": str(self.startdate),
+                "enddate": str(self.enddate),
+                "imagecourse": str(self.imagecourse),
+                "teacher": self.teacher.getall(),
+                "student": []
+            }
+        else:
+            return {
+                "id": str(self._id),
+                "namecourse": self.namecourse,
+                "startdate": str(self.startdate),
+                "enddate": str(self.enddate),
+                "imagecourse": str(self.imagecourse),
+                "teacher": str(self.teacher),
+                "student": [val.getall() for val in self.student]
+            }
 
     def getallc(self):
         return {
