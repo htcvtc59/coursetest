@@ -29,8 +29,8 @@ def usersappsignin(request):
         if 'signout' == request.session['uid'] or not request.session['uid'] or not request.session['role']:
             return render(request, template_name='index.html')
         elif 'TEACHER' == request.session['role']:
-            return render(request, template_name='usersappmain.html')
+            return render(request, template_name='usersappmainteacher.html')
         elif 'STUDENT' == request.session['role']:
-            return render(request, template_name='usersappmain.html')
+            return render(request, template_name='usersappmainstudent.html')
     except Exception:
         return render(request, template_name='index.html')

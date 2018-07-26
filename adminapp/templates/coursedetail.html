@@ -28,7 +28,9 @@
 
                                 <div class="mb-1 text-muted">{{ datacourse.startdate }} - {{ datacourse.enddate }}</div>
                                 <p class="card-text mb-auto">Giảng viên hỗ trợ {{ datacourse.teacher.fullname }}</p>
-
+                                <b-button size="md" variant="primary" type="button" @click="onDeleteCourse">
+                                    Xoá
+                                </b-button>
                             </div>
                             <img class="card-img-right flex-auto d-none d-lg-block"
                                  src="/media/{{ datacourse.imagecourse }}"
@@ -71,6 +73,12 @@
                         <div class="col-md-12">
                             <b-pagination v-bind:total-rows="totalRows" v-bind:per-page="perPage"
                                           v-model="currentPage" align="center"></b-pagination>
+                        </div>
+                        <div class="col-md-12 m-3">
+                            <b-button class="m-3" size="md" type="button" @click="onUpdateCourse"
+                                      variant="success">
+                                Cập nhật khoá học
+                            </b-button>
                         </div>
 
                     </div>
@@ -190,6 +198,10 @@
                     sortDesc: false,
                     sortDirection: 'asc',
                     filter: null,
+                    categorycourse: '{{ categorycourse }}',
+                    infoc: '{{ infoc }}',
+                    location: '{{ location }}'
+
                 }
             },
             computed: {
@@ -203,6 +215,27 @@
             },
             created() {
 
+                var vm = this;
+                axios({
+                    method: 'post',
+                    url: '/app/appcourse/coursegetstudentin/',
+                    data: {
+                        categorycourse: vm.categorycourse,
+                        infoc: vm.infoc,
+                    },
+                    xsrfCookieName: 'csrftoken',
+                    xsrfHeaderName: 'X-CSRFToken',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    },
+                }).then(function (response) {
+                    if (response.status === 200) {
+                        vm.items = response.data;
+                        vm.totalRows = vm.items.length;
+                    }
+                });
+
             },
             methods: {
                 info(item, index, button) {
@@ -214,20 +247,65 @@
                         }
                     });
 
-
-                }, onFiltered(filteredItems) {
+                },
+                onFiltered(filteredItems) {
                     this.totalRows = filteredItems.length;
                     this.currentPage = 1;
                 },
                 onAddToCourse(data) {
-
                     var vm = this;
 
                     vm.items = data;
                     console.log(vm.items);
                     vm.totalRows = vm.items.length;
+                },
+                onUpdateCourse(e) {
 
-                }
+                    var vm = this;
+                    axios({
+                        method: 'post',
+                        url: '/app/appcourse/update/',
+                        data: {
+                            data: JSON.stringify(vm.items),
+                            categorycourse: vm.categorycourse,
+                            infoc: vm.infoc,
+                        },
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200) {
+                            console.log(response.data);
+                            window.location.href = '/app/category/' + vm.location + '-' + response.data + '/';
+                        }
+                    });
+                },
+                onDeleteCourse(e) {
+                    e.preventDefault();
+
+                    var vm = this;
+                    axios({
+                        method: 'post',
+                        url: '/app/appcourse/delete/',
+                        data: {
+                            categorycourse: vm.categorycourse,
+                            infoc: vm.infoc,
+                        },
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200) {
+                            window.location.href = '/app/category/' + vm.location + '-' + response.data + '/';
+                        }
+                    });
+                },
             }
         });
 

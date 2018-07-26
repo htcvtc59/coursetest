@@ -34,7 +34,7 @@ def adminbasecourse(request):
         if 'signout' == request.session['uid'] or not request.session['uid'] or not request.session['role']:
             return render(request, template_name='index.html')
         elif request.session['role'] == 'TEACHER':
-            return render(request, template_name='usersappmain.html')
+            return render(request, template_name='usersappmainteacher.html')
         elif request.session['role'] == 'ADMIN':
             return render(request, template_name='dashboard.html')
     except Exception:
@@ -45,12 +45,14 @@ def adminbaseaccount(request):
     try:
         if 'signout' == request.session['uid'] or not request.session['uid']:
             return render(request, template_name='index.html')
-        elif request.session['role'] != 'TEACHER' or request.session['role'] != 'STUDENT':
+        elif request.session['role'] == 'ADMIN':
             data = requests.get('http://127.0.0.1:8000/app/appteacher/getall/', headers=headers)
             datastudent = requests.get('http://127.0.0.1:8000/app/appstudent/getall/', headers=headers)
 
             return render(request, template_name='users.html',
                           context={"datateacher": data.json(), "datastudent": datastudent.json()})
+        else:
+            return render(request, template_name='index.html')
     except Exception:
         return render(request, template_name='index.html')
 
@@ -59,7 +61,6 @@ def adminappsession(request):
     if 'POST' == request.method:
         request.session['uid'] = 'signout'
         del request.session['uid']
-        # return HttpResponse(content="OK", content_type='application/json', status=200)
         return render(request, template_name='index.html')
 
 
@@ -68,10 +69,11 @@ def adminappsession(request):
 @ensure_csrf_cookie
 def appteachergetall(request):
     try:
-        role = Role.objects.filter(name="TEACHER").first()._id
-        acc = Account.objects.filter(role=role)
-        return HttpResponse(content=json.dumps([res.getall() for res in acc]), content_type="application/json",
-                            status=200)
+        if request.session['role'] == 'ADMIN':
+            role = Role.objects.filter(name="TEACHER").first()._id
+            acc = Account.objects.filter(role=role)
+            return HttpResponse(content=json.dumps([res.getall() for res in acc]), content_type="application/json",
+                                status=200)
     except Exception:
         pass
 
@@ -216,10 +218,11 @@ def appteacherupdate(request):
 @ensure_csrf_cookie
 def appstudentgetall(request):
     try:
-        role = Role.objects.filter(name="STUDENT").first()._id
-        acc = Account.objects.filter(role=role)
-        return HttpResponse(content=json.dumps([res.getall() for res in acc]), content_type="application/json",
-                            status=200)
+        if request.session['role'] == 'ADMIN':
+            role = Role.objects.filter(name="STUDENT").first()._id
+            acc = Account.objects.filter(role=role)
+            return HttpResponse(content=json.dumps([res.getall() for res in acc]), content_type="application/json",
+                                status=200)
     except Exception:
         pass
 
@@ -365,8 +368,10 @@ def appcategory(request):
     try:
         if 'signout' == request.session['uid'] or not request.session['uid']:
             return render(request, template_name='index.html')
-        else:
+        elif request.session['role'] == 'ADMIN':
             return render(request, template_name='category.html')
+        else:
+            return render(request, template_name='index.html')
     except Exception:
         return render(request, template_name='index.html')
 
@@ -484,10 +489,10 @@ def appcategorygetnav(request):
 def appcategoryrootname(request, rootname):
     try:
         if request.method == 'GET':
-            print(rootname)
-            return render(request=request, template_name='course.html', context={"categorycourse": rootname})
-            # return HttpResponse(content="", content_type="application/json",
-            #                     status=200)
+            if request.session['role'] == 'ADMIN':
+                return render(request=request, template_name='course.html', context={"categorycourse": rootname})
+            else:
+                return render(request, template_name='index.html')
     except Exception:
         pass
 
@@ -496,10 +501,10 @@ def appcategoryrootname(request, rootname):
 def appcategorysubname(request, subname):
     try:
         if request.method == 'GET':
-            print(subname)
-            return render(request=request, template_name='course.html', context={"categorycourse": subname})
-            # return HttpResponse(content="", content_type="application/json",
-            #                     status=200)
+            if request.session['role'] == 'ADMIN':
+                return render(request=request, template_name='course.html', context={"categorycourse": subname})
+            else:
+                return render(request, template_name='index.html')
     except Exception:
         pass
 
@@ -510,9 +515,11 @@ def adminbasestudents(request):
     try:
         if 'signout' == request.session['uid'] or not request.session['uid']:
             return render(request, template_name='index.html')
-        elif request.session['role'] != 'TEACHER' or request.session['role'] != 'STUDENT':
+        elif request.session['role'] == 'ADMIN':
             datastudentinfo = requests.get('http://localhost:8000/app/appstudentinfo/getall/', headers=headers)
             return render(request, template_name='students.html', context={"datastudentinfo": datastudentinfo.json()})
+        else:
+            return render(request, template_name='index.html')
     except Exception:
         return render(request, template_name='index.html')
 
@@ -520,9 +527,10 @@ def adminbasestudents(request):
 @ensure_csrf_cookie
 def adminstudentsgetall(request):
     try:
-        student = Student.objects.filter().all()
-        return HttpResponse(content=json.dumps([res.getall() for res in student]), content_type="application/json",
-                            status=200)
+        if request.session['role'] == 'ADMIN':
+            student = Student.objects.filter().all()
+            return HttpResponse(content=json.dumps([res.getall() for res in student]), content_type="application/json",
+                                status=200)
     except Exception:
         pass
 
@@ -805,25 +813,38 @@ def createcourse(request):
 
 
 @ensure_csrf_cookie
-def updatecourse(request, subname):
+def updatecourse(request):
     try:
-        if request.method == 'GET':
-            print(subname)
-            return render(request=request, template_name='course.html', context={"categorycourse": subname});
-            # return HttpResponse(content="", content_type="application/json",
-            #                     status=200)
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            data = dict_keys.get('data')
+            categorycourse = dict_keys.get('categorycourse')
+            infoc = dict_keys.get('infoc')
+
+            course = Course.objects.filter(pk=infoc, categorycourse=categorycourse).first()
+            liststudentid = []
+            for val in json.loads(data):
+                v = dict(val)
+                liststudentid.append(v['id'])
+            course.student_id = liststudentid
+            course.save()
+            return HttpResponse(content=categorycourse, content_type="application/json",
+                                status=200)
     except Exception:
         pass
 
 
 @ensure_csrf_cookie
-def deletecourse(request, subname):
+def deletecourse(request):
     try:
-        if request.method == 'GET':
-            print(subname)
-            return render(request=request, template_name='course.html', context={"categorycourse": subname});
-            # return HttpResponse(content="", content_type="application/json",
-            #                     status=200)
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            categorycourse = dict_keys.get('categorycourse')
+            infoc = dict_keys.get('infoc')
+            course = Course.objects.filter(pk=infoc, categorycourse=categorycourse).first()
+            course.delete()
+            return HttpResponse(content=categorycourse, content_type="application/json",
+                                status=200)
     except Exception:
         pass
 
@@ -887,11 +908,14 @@ def coursegetallsearch(request):
 def coursegetinfosub(request, subname, info):
     try:
         if request.method == 'GET':
-            course = Course.objects.filter(pk=info).first()
-            datastudentinfo = requests.get('http://localhost:8000/app/appstudentinfo/getall/', headers=headers)
-            return render(request=request, template_name='coursedetail.html',
-                          context={"categorycourse": subname, "infoc": info, "datacourse": course.getall(),
-                                   "datastudentinfo": datastudentinfo.json()})
+            if request.session['role'] == 'ADMIN':
+                course = Course.objects.filter(pk=info).first()
+                datastudentinfo = requests.get('http://localhost:8000/app/appstudentinfo/getall/', headers=headers)
+                return render(request=request, template_name='coursedetail.html',
+                              context={"categorycourse": subname, "infoc": info, "datacourse": course.getall(),
+                                       "datastudentinfo": datastudentinfo.json(), "location": "sub"})
+            else:
+                return render(request, template_name='index.html')
     except Exception:
         pass
 
@@ -900,11 +924,35 @@ def coursegetinfosub(request, subname, info):
 def coursegetinforoot(request, rootname, info):
     try:
         if request.method == 'GET':
-            course = Course.objects.filter(pk=info).first()
-            datastudentinfo = requests.get('http://localhost:8000/app/appstudentinfo/getall/', headers=headers)
-            return render(request=request, template_name='coursedetail.html',
-                          context={"categorycourse": rootname, "infoc": info, "datacourse": course.getall(),
-                                   "datastudentinfo": datastudentinfo.json()})
+            if request.session['role'] == 'ADMIN':
+                course = Course.objects.filter(pk=info).first()
+                datastudentinfo = requests.get('http://localhost:8000/app/appstudentinfo/getall/', headers=headers)
+                return render(request=request, template_name='coursedetail.html',
+                              context={"categorycourse": rootname, "infoc": info, "datacourse": course.getall(),
+                                       "datastudentinfo": datastudentinfo.json(), "location": "root"})
+            else:
+                return render(request, template_name='index.html')
+    except Exception:
+        pass
+
+
+@ensure_csrf_cookie
+def coursegetstudentin(request):
+    try:
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            categorycourse = dict_keys.get('categorycourse')
+            infoc = dict_keys.get('infoc')
+            print(categorycourse, infoc)
+
+            course = Course.objects.filter(pk=infoc).first()
+            liststudent = []
+            for val in course.student_id:
+                student = Student.objects.filter(pk=val).first()
+                liststudent.append(student.getall())
+
+            return HttpResponse(content=json.dumps(liststudent), content_type="application/json",
+                                status=200)
     except Exception:
         pass
 # end course

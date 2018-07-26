@@ -103,10 +103,17 @@
             },
             created() {
                 this.sessionuid = '{{  request.session.uid  }}';
-                if (this.sessionuid.length > 0 && this.sessionuid !== 'signout'
-                    && ('{{  request.session.role  }}' !== 'ADMIN' || '{{  request.session.role  }}' !== 'TEACHER')) {
+                if (this.sessionuid.length > 0 && this.sessionuid !== 'signout') {
                     this.signin = false;
-                    window.location.href = '/app/';
+                    if ('{{  request.session.role  }}' === 'ADMIN') {
+                        window.location.href = '/app/';
+                    }
+                    if ('{{  request.session.role  }}' === 'TEACHER') {
+                        window.location.href = '/teacher/';
+                    }
+                    if ('{{  request.session.role  }}' === 'STUDENT') {
+                        window.location.href = '/student/';
+                    }
                 } else {
                     this.signin = true;
                 }
@@ -157,11 +164,24 @@
                                     }
                                     vm.errors.splice(0);
                                 }
+
                                 console.log(response.data);
+
                                 if (response.data === "signedteacher") {
                                     vm.sessionuid = '{{  request.session.uid  }}';
                                     if (vm.sessionuid.length > 0) {
-                                        window.location.href = '/mainpage/';
+                                        window.location.href = '/teacher/';
+
+                                    } else {
+                                        window.location.href = '/';
+                                    }
+                                    vm.errors.splice(0);
+                                }
+
+                                if (response.data === "signedstudent") {
+                                    vm.sessionuid = '{{  request.session.uid  }}';
+                                    if (vm.sessionuid.length > 0) {
+                                        window.location.href = '/student/';
 
                                     } else {
                                         window.location.href = '/';

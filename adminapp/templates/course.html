@@ -133,7 +133,8 @@
 
             <div class="col-md-6" v-for="c in listdatacourse">
                 <div class="card flex-md-row mb-4 box-shadow h-md-250">
-                    <div class="card-body d-flex flex-column align-items-start">
+                    <div class="card-body d-flex flex-column align-items-start"
+                    >
                         <strong class="d-inline-block mb-2"
                                 :class="{'text-danger': c.statuscourse!=='Đang hoạt động',
                                  'text-primary': c.statuscourse==='Đang hoạt động' }">${ c.statuscourse }
@@ -273,8 +274,10 @@
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                     },
                 }).then(function (response) {
-                    if (response.status === 200) {
+                    if (response.status === 200 && response.data) {
+
                         console.log(response.data);
+
                         vm.totalrows = response.data.total;
                         datares = response.data.data;
 
@@ -310,7 +313,7 @@
 
                             vm.listdatacourse.push(result);
                         });
-                        console.log(vm.listdatacourse);
+
                     }
                 });
 
@@ -336,7 +339,7 @@
                 },
                 onSubmitCourse(e) {
                     e.preventDefault();
-                    console.log(JSON.stringify(this.form));
+
                     var vm = this;
 
                     axios({
@@ -387,9 +390,6 @@
 
                             vm.listdatacourse.push(result);
 
-                            console.log(vm.listdatacourse);
-
-
                             vm.form.name = '';
                             vm.form.coursecode = '';
                             vm.form.startdate = new Date();
@@ -407,7 +407,6 @@
                     return day === 0 || day === 6;
                 },
                 loadinputPagination(e) {
-
 
                 },
                 loadchangePagination(e) {
@@ -474,6 +473,8 @@
                                     vm.listdatacourse.push(result);
                                 });
                             }
+                        }).catch(function (error) {
+
                         });
 
                     } else {
@@ -671,7 +672,7 @@
                 onShowHideDate(e) {
                     e.preventDefault();
                     this.showdatetime = !this.showdatetime;
-                }
+                },
             },
 
         });
