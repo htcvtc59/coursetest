@@ -162,7 +162,7 @@ class Course(models.Model):
                 "startdate": str(self.startdate),
                 "enddate": str(self.enddate),
                 "imagecourse": str(self.imagecourse),
-                "teacher": str(self.teacher),
+                "teacher": self.teacher.getall(),
                 "student": [val.getall() for val in self.student]
             }
 

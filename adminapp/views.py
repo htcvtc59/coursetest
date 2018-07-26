@@ -485,7 +485,7 @@ def appcategoryrootname(request, rootname):
     try:
         if request.method == 'GET':
             print(rootname)
-            return render(request=request, template_name='course.html', context={"categorycourse": rootname});
+            return render(request=request, template_name='course.html', context={"categorycourse": rootname})
             # return HttpResponse(content="", content_type="application/json",
             #                     status=200)
     except Exception:
@@ -497,7 +497,7 @@ def appcategorysubname(request, subname):
     try:
         if request.method == 'GET':
             print(subname)
-            return render(request=request, template_name='course.html', context={"categorycourse": subname});
+            return render(request=request, template_name='course.html', context={"categorycourse": subname})
             # return HttpResponse(content="", content_type="application/json",
             #                     status=200)
     except Exception:
@@ -845,11 +845,26 @@ def coursegetallsearch(request):
 
             if not startdate and not enddate:
                 offset = (currentPage - 1) * perpage
-                totaldata = Course.objects.filter(categorycourse__contains=namecourse,namecourse__contains=namesearch).count()
-                rescourse = Course.objects.filter(categorycourse__contains=namecourse,namecourse__contains=namesearch)[offset:offset + perpage]
-                datalist = [val.getall() for val in rescourse]
-                result = json.dumps({"total": totaldata, "data": datalist})
-                return HttpResponse(content=result, content_type="application/json", status=200)
+                if Course.objects.filter(categorycourse__contains=namecourse).count() == 0:
+                    result = json.dumps({"total": 0, "data": []})
+                    return HttpResponse(content=result, content_type="application/json", status=200)
+                elif Course.objects.filter(categorycourse__contains=namecourse).count() > 0 \
+                        and str(namesearch).__len__() > 0:
+
+                    totaldata = Course.objects.filter(categorycourse__contains=namecourse,
+                                                      namecourse__contains=namesearch).count()
+                    rescourse = Course.objects.filter(categorycourse__contains=namecourse,
+                                                      namecourse__contains=namesearch)[offset:offset + perpage]
+                    datalist = [val.getall() for val in rescourse]
+                    result = json.dumps({"total": totaldata, "data": datalist})
+                    return HttpResponse(content=result, content_type="application/json", status=200)
+                elif Course.objects.filter(categorycourse__contains=namecourse).count() > 0 \
+                        and str(namesearch).__len__() == 0:
+                    totaldata = Course.objects.filter(categorycourse__contains=namecourse).count()
+                    rescourse = Course.objects.filter(categorycourse__contains=namecourse)[offset:offset + perpage]
+                    datalist = [val.getall() for val in rescourse]
+                    result = json.dumps({"total": totaldata, "data": datalist})
+                    return HttpResponse(content=result, content_type="application/json", status=200)
 
             if startdate and enddate:
                 offset = (currentPage - 1) * perpage
@@ -864,6 +879,32 @@ def coursegetallsearch(request):
                 datalist = [val.getall() for val in rescourse]
                 result = json.dumps({"total": totaldata, "data": datalist})
                 return HttpResponse(content=result, content_type="application/json", status=200)
+    except Exception:
+        pass
+
+
+@ensure_csrf_cookie
+def coursegetinfosub(request, subname, info):
+    try:
+        if request.method == 'GET':
+            course = Course.objects.filter(pk=info).first()
+            datastudentinfo = requests.get('http://localhost:8000/app/appstudentinfo/getall/', headers=headers)
+            return render(request=request, template_name='coursedetail.html',
+                          context={"categorycourse": subname, "infoc": info, "datacourse": course.getall(),
+                                   "datastudentinfo": datastudentinfo.json()})
+    except Exception:
+        pass
+
+
+@ensure_csrf_cookie
+def coursegetinforoot(request, rootname, info):
+    try:
+        if request.method == 'GET':
+            course = Course.objects.filter(pk=info).first()
+            datastudentinfo = requests.get('http://localhost:8000/app/appstudentinfo/getall/', headers=headers)
+            return render(request=request, template_name='coursedetail.html',
+                          context={"categorycourse": rootname, "infoc": info, "datacourse": course.getall(),
+                                   "datastudentinfo": datastudentinfo.json()})
     except Exception:
         pass
 # end course

@@ -144,11 +144,11 @@
                         <div class="mb-1 text-muted">${ c.startdate } - ${ c.enddate }</div>
                         <p class="card-text mb-auto">Giảng viên hỗ trợ ${ c.teacherfullname }</p>
 
-                        <a href="#">Chi tiết</a>
+                        <a :href="`${ c.id }`">Chi tiết</a>
                     </div>
                     <img class="card-img-right flex-auto d-none d-lg-block" :src="`/media/${ c.imagecourse }`"
                          height="250" width="230"
-                         alt="Card image cap">
+                         :alt="`${ c.statuscourse }`">
                 </div>
             </div>
 
@@ -353,6 +353,41 @@
                         if (response.status === 200) {
                             console.log(response.data);
                             vm.$refs.modalappcourseRef.hide();
+
+                            var val = response.data;
+
+                            var id = val.id;
+                            var namecourse = val.namecourse;
+                            var imagecourse = val.imagecourse;
+                            var enddate = moment(val.enddate).format("DD-MM-YYYY");
+                            var startdate = moment(val.startdate).format("DD-MM-YYYY");
+                            var student = val.student;
+                            var teacheraccount = val.teacher.account;
+                            var teacherfullname = val.teacher.fullname;
+                            var datenow = moment(new Date()).format("DD-MM-YYYY");
+                            var statuscourse = null;
+
+                            if (enddate > datenow) {
+                                statuscourse = 'Đang hoạt động';
+                            } else {
+                                statuscourse = 'Đã kết thúc';
+                            }
+
+                            result = {
+                                id: id,
+                                namecourse: namecourse,
+                                imagecourse: imagecourse,
+                                enddate: enddate,
+                                startdate: startdate,
+                                student: student,
+                                teacheraccount: teacheraccount,
+                                teacherfullname: teacherfullname,
+                                statuscourse: statuscourse,
+                            };
+
+                            vm.listdatacourse.push(result);
+
+                            console.log(vm.listdatacourse);
 
 
                             vm.form.name = '';

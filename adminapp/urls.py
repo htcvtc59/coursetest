@@ -38,7 +38,11 @@ urlpatterns = [
     # end student detail
 
     # course
-    re_path('^app/appcourse/getall/$', views.adminstudentsgetall, name='adminstudentsgetall'),
+    re_path('^app/category/(?:sub-(?P<subname>[A-Za-z]+)/(?P<info>[A-Za-z0-9]+))?$', views.coursegetinfosub,
+            name='coursegetinfosub'),
+    re_path('^app/category/(?:root-(?P<rootname>[A-Za-z]+)/(?P<info>[A-Za-z0-9]+))?$', views.coursegetinforoot,
+            name='coursegetinforoot'),
+
     re_path('^app/appcourse/getallpagination/$', views.coursegetallsearch, name='coursegetallsearch'),
 
     re_path('^app/appcourse/create/$', views.createcourse, name='createcourse'),

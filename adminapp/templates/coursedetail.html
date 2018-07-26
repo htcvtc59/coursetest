@@ -1,0 +1,319 @@
+{% extends 'layoutapp.html' %}
+{% load static from staticfiles %}
+
+{% block title %}
+
+    Course Detail
+{% endblock %}
+
+{% block contentapp %}
+    <link href="{% static 'assest/datepicker/vue-datepicker-local.css' %}" rel="stylesheet">
+    <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+    <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
+    <script src="{% static 'assest/datepicker/moment.js' %}"></script>
+
+    {% csrf_token %}
+
+    <div class="col-md-12" id="coursedetailupdate" style="min-height: 80rem;">
+        <div class="row">
+            <div class="col-md-12">
+                {% if datacourse %}
+                    <div class="col-md-6 mx-auto">
+                        <div class="card flex-md-row mb-4 box-shadow h-md-250">
+                            <div class="card-body d-flex flex-column align-items-start">
+
+                                <h3 class="mb-0">
+                                    <a class="text-dark" href="#">{{ datacourse.namecourse }}</a>
+                                </h3>
+
+                                <div class="mb-1 text-muted">{{ datacourse.startdate }} - {{ datacourse.enddate }}</div>
+                                <p class="card-text mb-auto">Giảng viên hỗ trợ {{ datacourse.teacher.fullname }}</p>
+
+                            </div>
+                            <img class="card-img-right flex-auto d-none d-lg-block"
+                                 src="/media/{{ datacourse.imagecourse }}"
+                                 height="250" width="230"
+                                 alt="">
+                        </div>
+                    </div>
+
+                {% endif %}
+
+            </div>
+            <div class="col-md-12" style="min-height: 30rem;">
+                <div class="row">
+                    <div class="col-md-8 mx-auto">
+                        <b-form-input v-model="filter" placeholder="Tìm kiếm"/>
+                    </div>
+
+                    <div class="col-md-12 my-3">
+                        <!-- Main table element -->
+                        <b-table show-empty
+                                 stacked="md"
+                                 v-bind:items="items"
+                                 v-bind:fields="fields"
+                                 v-bind:current-page="currentPage"
+                                 v-bind:per-page="perPage"
+                                 v-bind:filter="filter"
+                                 v-bind:sort-by.sync="sortBy"
+                                 v-bind:sort-desc.sync="sortDesc"
+                                 v-bind:sort-direction="sortDirection"
+                                 @filtered="onFiltered"
+                        >
+                            <template slot="actions" slot-scope="row">
+                                <b-button size="sm" variant="danger"
+                                          @click.stop="info(row.item, row.index, $event.target)" class="mr-1">
+                                    Xoá
+                                </b-button>
+                            </template>
+                        </b-table>
+
+                        <div class="col-md-12">
+                            <b-pagination v-bind:total-rows="totalRows" v-bind:per-page="perPage"
+                                          v-model="currentPage" align="center"></b-pagination>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-12">
+                <b-button class="m-3" @click="onAddToCourse" size="md" id="addstudenttocourse" type="button"
+                          variant="primary">
+                    Thêm vào khoá học
+                </b-button>
+
+                <b-button class="m-2" size="md" id="getallstudents" type="button"
+                          variant="primary">
+                    Tất cả
+                </b-button>
+                <b-button class="m-2" size="md" id="nonegetallstudents" type="button"
+                          variant="primary">
+                    Bỏ chọn
+                </b-button>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered" cellspacing="0" id="tableStudentToCourse"
+                           style="width:100%">
+                        <thead>
+                        <tr>
+                            <th>Họ và Tên</th>
+                            <th>Quê quán</th>
+                            <th>Ngày sinh</th>
+                            <th>Trường</th>
+                            <th>TG tốt nghiệp</th>
+                            <th>Ảnh</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Ngày tạo</th>
+                            <th>Trạng thái</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% if datastudentinfo %}
+                            {% for s in datastudentinfo %}
+                                <tr>
+                                    <td>{{ s.fullname }}</td>
+                                    <td>{{ s.hometown }}</td>
+                                    <td>{{ s.birthday }}</td>
+                                    <td>{{ s.school }}</td>
+                                    <td>{{ s.graduationtime }}</td>
+                                    <td><img src="/media/{{ s.face }}" height="50" width="50"></td>
+                                    <td>{{ s.email }}</td>
+                                    <td>{{ s.phone }}</td>
+                                    <td>{{ s.createdate }}</td>
+                                    <td>
+                                        {% if s.status == True %}
+                                            <button class="btn btn-sm btn-success"><i
+                                                    class="fa fa-check"></i></button>
+                                        {% else %}
+                                            <button class="btn btn-sm btn-danger"><i
+                                                    class="fa fa-times"></i>
+                                            </button>
+                                        {% endif %}
+
+                                    </td>
+                                    <td>{{ s.accountcode }}</td>
+                                    <td>{{ s.id }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="{% static 'assest/datepicker/vue-datepicker-local.js' %}"></script>
+
+    <script src="{% static 'assest/vendor/holder.min.js' %}"></script>
+    <script>
+        Holder.addTheme('thumb', {
+            bg: '#55595c',
+            fg: '#eceeef',
+            text: 'Thumbnail'
+        });
+    </script>
+    <script>
+        Vue.component('vue-multiselect', window.VueMultiselect.default);
+
+        var course = new Vue({
+            delimiters: ['${', '}'],
+            el: '#coursedetailupdate',
+            data() {
+                return {
+                    items: [],
+                    fields: [
+                        {key: 'fullname', label: 'Họ tên', sortable: true, sortDirection: 'desc'},
+                        {key: 'birthday', label: 'Ngày sinh', sortable: true},
+                        {key: 'email', label: 'Email', sortable: true},
+                        {key: 'school', label: 'Trường học', sortable: true},
+                        {key: 'phone', label: 'SĐT', sortable: true},
+                        {key: 'actions', label: 'Xoá'}
+                    ],
+                    currentPage: 1,
+                    perPage: 5,
+                    totalRows: 0,
+                    sortBy: null,
+                    sortDesc: false,
+                    sortDirection: 'asc',
+                    filter: null,
+                }
+            },
+            computed: {
+                sortOptions() {
+                    return this.fields
+                        .filter(f => f.sortable)
+                        .map(f => {
+                            return {text: f.label, value: f.key}
+                        })
+                }
+            },
+            created() {
+
+            },
+            methods: {
+                info(item, index, button) {
+                    var id = item.id;
+
+                    this.items.filter((val, index) => {
+                        if (val.id === id) {
+                            this.items.splice(index, 1);
+                        }
+                    });
+
+
+                }, onFiltered(filteredItems) {
+                    this.totalRows = filteredItems.length;
+                    this.currentPage = 1;
+                },
+                onAddToCourse(data) {
+
+                    var vm = this;
+
+                    vm.items = data;
+                    console.log(vm.items);
+                    vm.totalRows = vm.items.length;
+
+                }
+            }
+        });
+
+        $(document).ready(function () {
+
+            var tbstudentinfocourse = $("#tableStudentToCourse").DataTable({
+                "pagingType": "full_numbers",
+                "language": {
+                    "decimal": "",
+                    "emptyTable": "Không có dữ liệu trong bảng !",
+                    "info": "Bản ghi từ _START_ đến _END_ của _TOTAL_ số bản ghi",
+                    "infoEmpty": "Showing 0 to 0 of 0 entries",
+                    "infoFiltered": "(tìm thấy từ _MAX_ số bản ghi)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Hiển thị _MENU_ bản ghi",
+                    "loadingRecords": "Loading...",
+                    "processing": "Processing...",
+                    "search": "Tìm kiếm:",
+                    "zeroRecords": "Không có bản ghi nào !",
+                    "paginate": {
+                        "first": "Đầu tiên",
+                        "last": "Cuối cùng",
+                        "next": "Tiếp theo",
+                        "previous": "Trở lại"
+                    },
+                    "aria": {
+                        "sortAscending": ": activate to sort column ascending",
+                        "sortDescending": ": activate to sort column descending"
+                    }
+                },
+                "columnDefs": [
+                    {targets: [8, 10, 11], visible: false},
+
+                ],
+                select: {
+                    style: 'multi',
+                },
+
+            });
+
+            $('#addstudenttocourse').click(function (e) {
+                e.preventDefault();
+                var data = tbstudentinfocourse.rows({selected: true}).data().toArray();
+                var listdata = [];
+                data.forEach((val, index) => {
+                    listdata.push({
+                        "id": val[11],
+                        "fullname": val[0],
+                        "hometown": val[1],
+                        "birthday": val[2],
+                        "school": val[3],
+                        "graduationtime": val[4],
+                        "face": val[5],
+                        "email": val[6],
+                        "phone": val[7],
+                        "coursecode": val[10],
+                        "studentcode": val[10],
+                        "accountcode": val[10],
+                        "createdate": val[8],
+                        "status": val[9]
+                    })
+                });
+
+                course.onAddToCourse(listdata);
+
+            });
+
+            $('#getallstudents').click(function () {
+                tbstudentinfocourse.rows({search: 'applied'}).nodes().each(function () {
+                    $(this).addClass('selected');
+                });
+                tbstudentinfocourse.rows({search: 'applied'}).select();
+            });
+
+            $('#nonegetallstudents').click(function () {
+                tbstudentinfocourse.rows({page: 'all'}).nodes().each(function () {
+                    $(this).removeClass('selected');
+                });
+                tbstudentinfocourse.rows().deselect();
+
+            });
+
+
+        });
+
+    </script>
+
+{% endblock %}
