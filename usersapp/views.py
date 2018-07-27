@@ -19,7 +19,8 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from passlib.apps import custom_app_context as pwd_context
-from adminapp.models import SubCateCourse, CategoryCourse, Course
+from adminapp.models import SubCateCourse, CategoryCourse, Course, Student, UploadFileUsers, Teacher
+import math
 
 
 # Create your views here.
@@ -34,3 +35,28 @@ def usersappsignin(request):
             return render(request, template_name='usersappmainstudent.html')
     except Exception:
         return render(request, template_name='index.html')
+
+
+@ensure_csrf_cookie
+def teachergetallcourse(request):
+    try:
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            perPage = dict_keys.get('perPage')
+            currentPage = dict_keys.get('currentPage')
+            uid = dict_keys.get('uid')
+            offset = (currentPage - 1) * perPage
+
+            datenow = "%02d-%02d-%02d" % (datetime.now().year, datetime.now().month, datetime.now().day)
+            rescourse = Course.objects.filter(enddate__gte=datenow, startdate__lt=datenow).order_by('-enddate',
+                                                                                                    '-startdate')[
+                        offset:offset + perPage]
+            listcourse = []
+            for val in rescourse:
+                account = dict(val.teacher.getall())['account']
+                if account == uid:
+                    listcourse.append(val.getallc())
+
+            return HttpResponse(content=json.dumps(listcourse), content_type="application/json", status=200)
+    except Exception:
+        pass

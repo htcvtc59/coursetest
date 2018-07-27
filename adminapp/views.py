@@ -19,7 +19,7 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from passlib.apps import custom_app_context as pwd_context
-from adminapp.models import SubCateCourse, CategoryCourse, Course, Student, CommentUsers, UploadFileUsers, Teacher
+from adminapp.models import SubCateCourse, CategoryCourse, Course, Student, UploadFileUsers, Teacher
 import math
 
 # Create your views here.

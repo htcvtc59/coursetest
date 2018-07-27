@@ -179,12 +179,12 @@ class Course(models.Model):
 
 # Comment teacher and student
 
-class CommentUsers(models.Model):
+class EvaluateCommentUsers(models.Model):
     _id = models.ObjectIdField(primary_key=True)
-    userscomment = models.CharField(max_length=300)
-    rolecomment = models.CharField(max_length=300)
-    coursecomment = models.CharField(max_length=500)
-    contentcomment = models.TextField(max_length=800)
+    userscomment = models.CharField(max_length=300)  # id student
+    rolecomment = models.CharField(max_length=300)  # id teacher comment
+    coursecomment = models.CharField(max_length=500)  # id course
+    contentcomment = models.TextField(max_length=800)  # content
 
     def __str__(self):
         return self.userscomment
@@ -193,6 +193,7 @@ class CommentUsers(models.Model):
         return {
             "id": str(self.pk),
             "userscomment": self.userscomment,
+            "rolecomment": self.rolecomment,
             "coursecomment": self.coursecomment,
             "contentcomment": self.contentcomment
         }
@@ -204,6 +205,7 @@ class CommentUsers(models.Model):
 
 class UploadFileUsers(models.Model):
     _id = models.ObjectIdField(primary_key=True)
+    name = models.CharField(max_length=600)
     usersupload = models.CharField(max_length=300)
     roleupload = models.CharField(max_length=300)
     coursecode = models.CharField(max_length=500)
@@ -216,6 +218,7 @@ class UploadFileUsers(models.Model):
     def getall(self):
         return {
             "id": str(self.pk),
+            "name": self.name,
             "usersupload": self.usersupload,
             "roleupload": self.roleupload,
             "coursecode": self.coursecode,
@@ -269,6 +272,3 @@ class CategoryCourse(models.Model):
             "createdate": str(self.createdate),
             "status": self.status
         }
-
-
-Course.objects.filter(categorycourse__contains='QA').order_by('-enddate')

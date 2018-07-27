@@ -8,6 +8,9 @@
 {% endblock %}
 
 {% block usersapp %}
+
+    {% csrf_token %}
+
     <div class="container" id="appteachersite">
 
         <div class="row">
@@ -15,7 +18,9 @@
             <div class="col-lg-3">
                 <div class="my-5"></div>
                 <div class="list-group">
-                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==1 }" @click="activate(1)">
+                    <a href="{% url 'usersappsigninteacher' %}" class="list-group-item"
+                       v-bind:class="{ 'active' : active_el==1 }"
+                       @click="activate(1)">
                         Khoá học tham gia </a>
                     <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==2 }" @click="activate(2)">
                         Tải tải liệu</a>
@@ -33,18 +38,82 @@
 
             <div class="col-lg-9">
 
-                <div class="card mt-4">
-                    <img class="card-img-top img-fluid" src="http://placehold.it/900x400" alt="">
-                    <div class="card-body">
-                        <h3 class="card-title">Product Name</h3>
-                        <h4>$24.99</h4>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente dicta
-                            fugit
-                            fugiat hic aliquam itaque facere, soluta. Totam id dolores, sint aperiam sequi pariatur
-                            praesentium animi perspiciatis molestias iure, ducimus!</p>
-                        <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
-                        4.0 stars
+                <div class="col-md-12 mt-4">
+
+                    <div class="row" v-if="detailstudent">
+
+                        <div class="col-md-4 my-1" v-if="items.length" v-for="item in items">
+
+                            <div class="card" style="width: 16rem;">
+                                <img class="card-img-top" :src="`/media/${ item.imagecourse }`" height="180"
+                                     width="100" alt="Card image cap">
+                                <div class="card-body">
+                                    <h5 class="card-title">${ item.namecourse }</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">${ item.startdate } - ${ item.enddate
+                                        }</h6>
+                                    <p class="card-text"></p>
+                                    <a href="#" class="btn btn-primary" @click="onShowDetail(item.id,item.namecourse)">Chi
+                                        tiết</a>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-12 my-3">
+                            <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage"
+                                          align="center"></b-pagination>
+                        </div>
                     </div>
+
+                    <!-- template detail course -->
+
+                    <div class="row" v-if="!detailstudent">
+                        <b-button size="md" variant="primary" @click="onShowDetailHide">
+                            <i class="fa fa-fw fa-long-arrow-left"></i></b-button>
+
+                        <div class="col-md-8 mx-auto">
+                            <b-form-input v-model="filter" placeholder="Tìm kiếm"/>
+
+                        </div>
+
+                        <div class="col-md-12 my-2">
+
+                            <!-- Main table element -->
+                            <b-table show-empty
+                                     stacked="md"
+                                     v-bind:items="itemsstudentcourse"
+                                     v-bind:fields="fields"
+                                     v-bind:current-page="currentPageStudent"
+                                     v-bind:per-page="perPageStudent"
+                                     v-bind:filter="filter"
+                                     v-bind:sort-by.sync="sortBy"
+                                     v-bind:sort-desc.sync="sortDesc"
+                                     v-bind:sort-direction="sortDirection"
+                                     @filtered="onFiltered"
+                            >
+                                <template slot="actions" slot-scope="row">
+                                    <b-button size="sm" variant="danger"
+                                              @click.stop="info(row.item, row.index, $event.target)" class="mr-1">
+                                        Đánh giá
+                                    </b-button>
+                                </template>
+                            </b-table>
+
+                            <!-- Info modal -->
+                            <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" ok-only>
+                                <pre>${ modalInfo.content }</pre>
+                            </b-modal>
+
+                            <div class="col-md-12">
+                                <b-pagination v-bind:total-rows="totalRowsStudent" v-bind:per-page="perPageStudent"
+                                              v-model="currentPageStudent" align="center"></b-pagination>
+                            </div>
+
+                        </div>
+
+                    </div>
+
                 </div>
                 <!-- /.card -->
 
@@ -91,13 +160,127 @@
             data() {
                 return {
                     active_el: 1,
-
+                    totalRows: 0,
+                    perPage: 10,
+                    currentPage: 1,
+                    items: [],
+                    detailstudent: true,
+                    itemsstudentcourse: [],
+                    totalRowsStudent: 0,
+                    currentPageStudent: 1,
+                    perPageStudent: 10,
+                    fields: [
+                        {key: 'fullname', label: 'Họ tên', sortable: true, sortDirection: 'desc'},
+                        {key: 'birthday', label: 'Ngày sinh', sortable: true},
+                        {key: 'email', label: 'Email', sortable: true},
+                        {key: 'school', label: 'Trường học', sortable: true},
+                        {key: 'phone', label: 'SĐT', sortable: true},
+                        {key: 'actions', label: 'Đánh giá'}
+                    ],
+                    filter: null,
+                    sortBy: null,
+                    sortDesc: false,
+                    sortDirection: 'asc',
+                    modalInfo: {title: '', content: ''}
 
                 }
             },
+            async created() {
+                console.log('start');
+
+                var vm = this;
+
+                await axios({
+                    method: 'post',
+                    url: '/teacher/course/getall/',
+                    data: {
+                        perPage: vm.perPage,
+                        currentPage: vm.currentPage,
+                        uid: '{{ request.session.uid }}'
+
+                    },
+                    xsrfCookieName: 'csrftoken',
+                    xsrfHeaderName: 'X-CSRFToken',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'Authorization': 'JWT {{ request.session.token.token }}'
+                    },
+                }).then(function (response) {
+                    if (response.status === 200 && response.data) {
+                        vm.items = response.data;
+
+                        vm.items.filter((val, index) => {
+                            val.startdate = moment(val.startdate).format("DD-MM-YYYY");
+                            val.enddate = moment(val.enddate).format("DD-MM-YYYY");
+                        });
+                        vm.totalRows = vm.items.length;
+                        console.log(vm.items);
+
+
+                    }
+                });
+
+            },
+            computed: {
+                sortOptions() {
+                    return this.fields
+                        .filter(f => f.sortable)
+                        .map(f => {
+                            return {text: f.label, value: f.key}
+                        })
+                }
+            },
             methods: {
+                onFiltered(filteredItems) {
+                    this.totalRowsStudent = filteredItems.length;
+                    this.currentPageStudent = 1;
+                },
+                info(item, index, button) {
+                    console.log(item);
+                    this.modalInfo.title = `Row index: ${index}`;
+                    this.modalInfo.content = JSON.stringify(item);
+                    this.$root.$emit('bv::show::modal', 'modalInfo', button);
+                },
+                resetModal() {
+                    this.modalInfo.title = '';
+                    this.modalInfo.content = '';
+                },
                 activate(el) {
                     this.active_el = el;
+                },
+                onShowDetail(itemid, namecourse) {
+
+                    var vm = this;
+
+                    axios({
+                        method: 'post',
+                        url: '/app/appcourse/coursegetstudentin/',
+                        data: {
+                            categorycourse: namecourse,
+                            infoc: itemid,
+                        },
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200) {
+
+                            vm.itemsstudentcourse = response.data;
+                            vm.totalRowsStudent = vm.itemsstudentcourse.length;
+
+                            console.log(vm.itemsstudentcourse);
+                        }
+                    });
+
+
+                    vm.detailstudent = !vm.detailstudent;
+                },
+                onShowDetailHide() {
+                    this.detailstudent = !this.detailstudent;
                 }
             }
 
