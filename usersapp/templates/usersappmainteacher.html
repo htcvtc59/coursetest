@@ -8,19 +8,25 @@
 {% endblock %}
 
 {% block usersapp %}
-    <div class="container">
+    <div class="container" id="appteachersite">
 
         <div class="row">
 
             <div class="col-lg-3">
                 <div class="my-5"></div>
                 <div class="list-group">
-                    <a href="#" class="list-group-item" @click="activate(1)">Khoá học tham gia</a>
-                    <a href="#" class="list-group-item" @click="activate(2)">Tải tải liệu</a>
-                    <a href="#" class="list-group-item" @click="activate(3)">Category 3</a>
-                    <a href="#" class="list-group-item" @click="activate(4)">Category 3</a>
-                    <a href="#" class="list-group-item" @click="activate(5)">Category 3</a>
-                    <a href="#" class="list-group-item" @click="activate(6)">Category 3</a>
+                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==1 }" @click="activate(1)">
+                        Khoá học tham gia </a>
+                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==2 }" @click="activate(2)">
+                        Tải tải liệu</a>
+                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==3 }" @click="activate(3)">
+                        Category 3</a>
+                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==4 }" @click="activate(4)">
+                        Category 3</a>
+                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==5 }" @click="activate(5)">
+                        Category 3</a>
+                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==6 }" @click="activate(6)">
+                        Category 3</a>
                 </div>
             </div>
             <!-- /.col-lg-3 -->
@@ -76,4 +82,25 @@
         </div>
 
     </div>
+
+
+    <script>
+        new Vue({
+            delimiters: ['${', '}'],
+            el: '#appteachersite',
+            data() {
+                return {
+                    active_el: 1,
+
+
+                }
+            },
+            methods: {
+                activate(el) {
+                    this.active_el = el;
+                }
+            }
+
+        })
+    </script>
 {% endblock %}

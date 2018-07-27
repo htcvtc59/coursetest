@@ -269,3 +269,6 @@ class CategoryCourse(models.Model):
             "createdate": str(self.createdate),
             "status": self.status
         }
+
+
+Course.objects.filter(categorycourse__contains='QA').order_by('-enddate')

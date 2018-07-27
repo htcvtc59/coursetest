@@ -46,6 +46,7 @@ def adminbaseaccount(request):
         if 'signout' == request.session['uid'] or not request.session['uid']:
             return render(request, template_name='index.html')
         elif request.session['role'] == 'ADMIN':
+            headers['Authorization'] = "JWT %s" % dict(request.session['token'])['token']
             data = requests.get('http://127.0.0.1:8000/app/appteacher/getall/', headers=headers)
             datastudent = requests.get('http://127.0.0.1:8000/app/appstudent/getall/', headers=headers)
 
@@ -69,13 +70,21 @@ def adminappsession(request):
 @ensure_csrf_cookie
 def appteachergetall(request):
     try:
-        if request.session['role'] == 'ADMIN':
+        token = dict(request.META)['HTTP_AUTHORIZATION']
+        token = token.split(" ")[1]
+        verify = requests.post("http://127.0.0.1:8000/api-token-verify/",
+                               data={"token": "%s" % token}).status_code == 200
+        if verify:
             role = Role.objects.filter(name="TEACHER").first()._id
             acc = Account.objects.filter(role=role)
             return HttpResponse(content=json.dumps([res.getall() for res in acc]), content_type="application/json",
                                 status=200)
+        else:
+            return HttpResponse(content="", content_type="application/json",
+                                status=200)
     except Exception:
-        pass
+        return HttpResponse(content="", content_type="application/json",
+                            status=200)
 
 
 @ensure_csrf_cookie
@@ -218,13 +227,19 @@ def appteacherupdate(request):
 @ensure_csrf_cookie
 def appstudentgetall(request):
     try:
-        if request.session['role'] == 'ADMIN':
+        token = dict(request.META)['HTTP_AUTHORIZATION']
+        token = token.split(" ")[1]
+        verify = requests.post("http://127.0.0.1:8000/api-token-verify/",
+                               data={"token": "%s" % token}).status_code == 200
+        if verify:
             role = Role.objects.filter(name="STUDENT").first()._id
             acc = Account.objects.filter(role=role)
             return HttpResponse(content=json.dumps([res.getall() for res in acc]), content_type="application/json",
                                 status=200)
+        else:
+            return HttpResponse(content="", content_type="application/json", status=200)
     except Exception:
-        pass
+        return HttpResponse(content="", content_type="application/json", status=200)
 
 
 @ensure_csrf_cookie
@@ -513,10 +528,12 @@ def appcategorysubname(request, subname):
 @ensure_csrf_cookie
 def adminbasestudents(request):
     try:
+
         if 'signout' == request.session['uid'] or not request.session['uid']:
             return render(request, template_name='index.html')
         elif request.session['role'] == 'ADMIN':
-            datastudentinfo = requests.get('http://localhost:8000/app/appstudentinfo/getall/', headers=headers)
+            headers['Authorization'] = "JWT %s" % dict(request.session['token'])['token']
+            datastudentinfo = requests.get('http://127.0.0.1:8000/app/appstudentinfo/getall/', headers=headers)
             return render(request, template_name='students.html', context={"datastudentinfo": datastudentinfo.json()})
         else:
             return render(request, template_name='index.html')
@@ -527,12 +544,20 @@ def adminbasestudents(request):
 @ensure_csrf_cookie
 def adminstudentsgetall(request):
     try:
-        if request.session['role'] == 'ADMIN':
+        token = dict(request.META)['HTTP_AUTHORIZATION']
+        token = token.split(" ")[1]
+        verify = requests.post("http://127.0.0.1:8000/api-token-verify/",
+                               data={"token": "%s" % token}).status_code == 200
+        if verify:
             student = Student.objects.filter().all()
             return HttpResponse(content=json.dumps([res.getall() for res in student]), content_type="application/json",
                                 status=200)
+        else:
+            return HttpResponse(content="", content_type="application/json",
+                                status=200)
     except Exception:
-        pass
+        return HttpResponse(content="", content_type="application/json",
+                            status=200)
 
 
 @ensure_csrf_cookie
@@ -875,14 +900,18 @@ def coursegetallsearch(request):
                     totaldata = Course.objects.filter(categorycourse__contains=namecourse,
                                                       namecourse__contains=namesearch).count()
                     rescourse = Course.objects.filter(categorycourse__contains=namecourse,
-                                                      namecourse__contains=namesearch)[offset:offset + perpage]
+                                                      namecourse__contains=namesearch).order_by('-enddate',
+                                                                                                '-startdate')[
+                                offset:offset + perpage]
                     datalist = [val.getall() for val in rescourse]
                     result = json.dumps({"total": totaldata, "data": datalist})
                     return HttpResponse(content=result, content_type="application/json", status=200)
                 elif Course.objects.filter(categorycourse__contains=namecourse).count() > 0 \
                         and str(namesearch).__len__() == 0:
                     totaldata = Course.objects.filter(categorycourse__contains=namecourse).count()
-                    rescourse = Course.objects.filter(categorycourse__contains=namecourse)[offset:offset + perpage]
+                    rescourse = Course.objects.filter(categorycourse__contains=namecourse).order_by('-enddate',
+                                                                                                    '-startdate')[
+                                offset:offset + perpage]
                     datalist = [val.getall() for val in rescourse]
                     result = json.dumps({"total": totaldata, "data": datalist})
                     return HttpResponse(content=result, content_type="application/json", status=200)
@@ -896,7 +925,8 @@ def coursegetallsearch(request):
                 rescourse = Course.objects.filter(categorycourse__contains=namecourse,
                                                   namecourse__contains=namesearch,
                                                   startdate__gte=startdate,
-                                                  enddate__lte=enddate)[offset:offset + perpage]
+                                                  enddate__lte=enddate).order_by('-enddate', '-startdate')[
+                            offset:offset + perpage]
                 datalist = [val.getall() for val in rescourse]
                 result = json.dumps({"total": totaldata, "data": datalist})
                 return HttpResponse(content=result, content_type="application/json", status=200)

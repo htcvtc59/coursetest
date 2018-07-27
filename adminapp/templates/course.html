@@ -48,13 +48,15 @@
 
                                 <label for="excoursestartdate">Ngày bắt đầu:</label>
                                 <div id="excoursestartdate">
-                                    <vue-datepicker-local v-model="form.startdate"
+                                    <vue-datepicker-local v-model="form.startdate" clearable
+                                                          format="YYYY-MM-DD"
                                                           :local="local"></vue-datepicker-local>
                                 </div>
 
                                 <label for="excourseenddate">Ngày kết thúc:</label>
                                 <div id="excourseenddate">
-                                    <vue-datepicker-local v-model="form.enddate"
+                                    <vue-datepicker-local v-model="form.enddate" clearable
+                                                          format="YYYY-MM-DD"
                                                           :local="local"></vue-datepicker-local>
                                 </div>
 
@@ -105,13 +107,15 @@
                     <div v-if="showdatetime">
                         <label for="searchstartdate">Từ ngày :</label>
                         <div id="searchstartdate">
-                            <vue-datepicker-local v-model="search.startdate"
+                            <vue-datepicker-local v-model="search.startdate" clearable
+                                                  format="YYYY-MM-DD"
                                                   :local="local"></vue-datepicker-local>
                         </div>
 
                         <label for="searchenddate">Đến ngày :</label>
                         <div id="searchenddate">
-                            <vue-datepicker-local v-model="search.enddate"
+                            <vue-datepicker-local v-model="search.enddate" clearable
+                                                  format="YYYY-MM-DD"
                                                   :local="local"></vue-datepicker-local>
                         </div>
                     </div>
@@ -136,8 +140,10 @@
                     <div class="card-body d-flex flex-column align-items-start"
                     >
                         <strong class="d-inline-block mb-2"
-                                :class="{'text-danger': c.statuscourse!=='Đang hoạt động',
-                                 'text-primary': c.statuscourse==='Đang hoạt động' }">${ c.statuscourse }
+                                :class="{'text-danger': c.statuscourse==='Đã kết thúc',
+                                 'text-primary': c.statuscourse==='Đang hoạt động',
+                                 'text-secondary': c.statuscourse==='Sắp diễn ra' }">
+                            ${ c.statuscourse }
                         </strong>
                         <h3 class="mb-0">
                             <a class="text-dark" href="#">${ c.namecourse }</a>
@@ -231,10 +237,10 @@
 
                 }
             },
-            created() {
+            async created() {
 
                 var vm = this;
-                axios({
+                await axios({
                     method: 'post',
                     url: '/app/appteacher/getall/',
                     data: '',
@@ -242,7 +248,8 @@
                     xsrfHeaderName: 'X-CSRFToken',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'Authorization': 'JWT {{ request.session.token.token }}'
                     },
                 }).then(function (response) {
                     if (response.status === 200) {
@@ -257,7 +264,7 @@
                 });
 
 
-                axios({
+                await axios({
                     method: 'post',
                     url: '/app/appcourse/getallpagination/',
                     data: {
@@ -271,7 +278,8 @@
                     xsrfHeaderName: 'X-CSRFToken',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'Authorization': 'JWT {{ request.session.token.token }}'
                     },
                 }).then(function (response) {
                     if (response.status === 200 && response.data) {
@@ -295,8 +303,11 @@
 
                             if (enddate > datenow) {
                                 statuscourse = 'Đang hoạt động';
-                            } else {
+                            } else if (enddate > datenow) {
                                 statuscourse = 'Đã kết thúc';
+                            }
+                            if (startdate >= datenow) {
+                                statuscourse = 'Sắp diễn ra';
                             }
 
                             result = {
@@ -372,8 +383,12 @@
 
                             if (enddate > datenow) {
                                 statuscourse = 'Đang hoạt động';
-                            } else {
+                            } else if (enddate < datenow) {
                                 statuscourse = 'Đã kết thúc';
+                            }
+
+                            if (startdate >= datenow) {
+                                statuscourse = 'Sắp diễn ra';
                             }
 
                             result = {
@@ -455,9 +470,13 @@
 
                                     if (enddate > datenow) {
                                         statuscourse = 'Đang hoạt động';
-                                    } else {
+                                    } else if (enddate < datenow) {
                                         statuscourse = 'Đã kết thúc';
                                     }
+                                    if (startdate >= datenow) {
+                                        statuscourse = 'Sắp diễn ra';
+                                    }
+
                                     result = {
                                         id: id,
                                         namecourse: namecourse,
@@ -517,9 +536,14 @@
 
                                     if (enddate > datenow) {
                                         statuscourse = 'Đang hoạt động';
-                                    } else {
+                                    } else if (enddate < datenow) {
                                         statuscourse = 'Đã kết thúc';
                                     }
+
+                                    if (startdate >= datenow) {
+                                        statuscourse = 'Sắp diễn ra';
+                                    }
+
                                     result = {
                                         id: id,
                                         namecourse: namecourse,
@@ -586,9 +610,13 @@
 
                                     if (enddate > datenow) {
                                         statuscourse = 'Đang hoạt động';
-                                    } else {
+                                    } else if (enddate < datenow) {
                                         statuscourse = 'Đã kết thúc';
                                     }
+                                    if (startdate >= datenow) {
+                                        statuscourse = 'Sắp diễn ra';
+                                    }
+
                                     result = {
                                         id: id,
                                         namecourse: namecourse,
@@ -647,9 +675,13 @@
 
                                     if (enddate > datenow) {
                                         statuscourse = 'Đang hoạt động';
-                                    } else {
+                                    } else if (enddate < datenow) {
                                         statuscourse = 'Đã kết thúc';
                                     }
+                                    if (startdate >= datenow) {
+                                        statuscourse = 'Sắp diễn ra';
+                                    }
+
                                     result = {
                                         id: id,
                                         namecourse: namecourse,
