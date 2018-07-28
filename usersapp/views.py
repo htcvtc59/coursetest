@@ -60,3 +60,12 @@ def teachergetallcourse(request):
             return HttpResponse(content=json.dumps(listcourse), content_type="application/json", status=200)
     except Exception:
         pass
+
+
+@ensure_csrf_cookie
+def teachercommentperstudent(request):
+    try:
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+    except Exception:
+        pass

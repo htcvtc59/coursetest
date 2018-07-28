@@ -237,9 +237,12 @@
 
                 }
             },
-            async created() {
+            mounted() {
 
+            },
+            async created() {
                 var vm = this;
+
                 await axios({
                     method: 'post',
                     url: '/app/appteacher/getall/',
@@ -252,8 +255,9 @@
                         'Authorization': 'JWT {{ request.session.token.token }}'
                     },
                 }).then(function (response) {
-                    if (response.status === 200) {
-                        response.data.forEach((val, index) => {
+                    if (response.status === 200 && response.data) {
+
+                        response.data.forEach((val) => {
                             vm.options.push({
                                 name: val.infofullname,
                                 idteacher: val.id
@@ -262,7 +266,6 @@
                         });
                     }
                 });
-
 
                 await axios({
                     method: 'post',
@@ -287,9 +290,9 @@
                         console.log(response.data);
 
                         vm.totalrows = response.data.total;
-                        datares = response.data.data;
+                        var datares = response.data.data;
 
-                        datares.forEach((val, index) => {
+                        datares.forEach((val) => {
                             var id = val.id;
                             var namecourse = val.namecourse;
                             var imagecourse = val.imagecourse;
@@ -301,12 +304,15 @@
                             var datenow = moment(new Date()).format("DD-MM-YYYY");
                             var statuscourse = null;
 
-                            if (enddate > datenow) {
+
+                            if (moment(startdate, "DD-MM-YYYY") <= moment(datenow, "DD-MM-YYYY")) {
                                 statuscourse = 'Đang hoạt động';
-                            } else if (enddate > datenow) {
+                            }
+
+                            if (moment(enddate, "DD-MM-YYYY") < moment(datenow, "DD-MM-YYYY")) {
                                 statuscourse = 'Đã kết thúc';
                             }
-                            if (startdate >= datenow) {
+                            if (moment(startdate, "DD-MM-YYYY") > moment(datenow, "DD-MM-YYYY")) {
                                 statuscourse = 'Sắp diễn ra';
                             }
 
@@ -327,7 +333,6 @@
 
                     }
                 });
-
 
             },
             methods: {
@@ -381,13 +386,14 @@
                             var datenow = moment(new Date()).format("DD-MM-YYYY");
                             var statuscourse = null;
 
-                            if (enddate > datenow) {
+                            if (moment(startdate, "DD-MM-YYYY") <= moment(datenow, "DD-MM-YYYY")) {
                                 statuscourse = 'Đang hoạt động';
-                            } else if (enddate < datenow) {
-                                statuscourse = 'Đã kết thúc';
                             }
 
-                            if (startdate >= datenow) {
+                            if (moment(enddate, "DD-MM-YYYY") < moment(datenow, "DD-MM-YYYY")) {
+                                statuscourse = 'Đã kết thúc';
+                            }
+                            if (moment(startdate, "DD-MM-YYYY") > moment(datenow, "DD-MM-YYYY")) {
                                 statuscourse = 'Sắp diễn ra';
                             }
 
@@ -468,12 +474,14 @@
                                     var datenow = moment(new Date()).format("DD-MM-YYYY");
                                     var statuscourse = null;
 
-                                    if (enddate > datenow) {
+                                    if (moment(startdate, "DD-MM-YYYY") <= moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Đang hoạt động';
-                                    } else if (enddate < datenow) {
+                                    }
+
+                                    if (moment(enddate, "DD-MM-YYYY") < moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Đã kết thúc';
                                     }
-                                    if (startdate >= datenow) {
+                                    if (moment(startdate, "DD-MM-YYYY") > moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Sắp diễn ra';
                                     }
 
@@ -534,13 +542,14 @@
                                     var datenow = moment(new Date()).format("DD-MM-YYYY");
                                     var statuscourse = null;
 
-                                    if (enddate > datenow) {
+                                    if (moment(startdate, "DD-MM-YYYY") <= moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Đang hoạt động';
-                                    } else if (enddate < datenow) {
-                                        statuscourse = 'Đã kết thúc';
                                     }
 
-                                    if (startdate >= datenow) {
+                                    if (moment(enddate, "DD-MM-YYYY") < moment(datenow, "DD-MM-YYYY")) {
+                                        statuscourse = 'Đã kết thúc';
+                                    }
+                                    if (moment(startdate, "DD-MM-YYYY") > moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Sắp diễn ra';
                                     }
 
@@ -608,12 +617,14 @@
                                     var datenow = moment(new Date()).format("DD-MM-YYYY");
                                     var statuscourse = null;
 
-                                    if (enddate > datenow) {
+                                    if (moment(startdate, "DD-MM-YYYY") <= moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Đang hoạt động';
-                                    } else if (enddate < datenow) {
+                                    }
+
+                                    if (moment(enddate, "DD-MM-YYYY") < moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Đã kết thúc';
                                     }
-                                    if (startdate >= datenow) {
+                                    if (moment(startdate, "DD-MM-YYYY") > moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Sắp diễn ra';
                                     }
 
@@ -673,12 +684,14 @@
                                     var datenow = moment(new Date()).format("DD-MM-YYYY");
                                     var statuscourse = null;
 
-                                    if (enddate > datenow) {
+                                    if (moment(startdate, "DD-MM-YYYY") <= moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Đang hoạt động';
-                                    } else if (enddate < datenow) {
+                                    }
+
+                                    if (moment(enddate, "DD-MM-YYYY") < moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Đã kết thúc';
                                     }
-                                    if (startdate >= datenow) {
+                                    if (moment(startdate, "DD-MM-YYYY") > moment(datenow, "DD-MM-YYYY")) {
                                         statuscourse = 'Sắp diễn ra';
                                     }
 

@@ -3,8 +3,7 @@
 
 
 {% block title %}
-
-
+    Teacher
 {% endblock %}
 
 {% block usersapp %}
@@ -101,8 +100,16 @@
                             </b-table>
 
                             <!-- Info modal -->
-                            <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" ok-only>
-                                <pre>${ modalInfo.content }</pre>
+                            <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" hide-footer>
+                                <b-form-textarea id="textarea1"
+                                                 v-model="modalInfo.comment"
+                                                 placeholder="Đánh giá"
+                                                 :rows="3"
+                                                 :max-rows="6">
+                                </b-form-textarea>
+                                <b-button size="md" variant="primary"
+                                          @click="onSaveCommnetStudent(modalInfo.content)">Lưu
+                                </b-button>
                             </b-modal>
 
                             <div class="col-md-12">
@@ -181,16 +188,20 @@
                     sortBy: null,
                     sortDesc: false,
                     sortDirection: 'asc',
-                    modalInfo: {title: '', content: ''}
+                    modalInfo: {
+                        title: '',
+                        content: '',
+                        comment: '',
+                    },
+                    itemcourse: '',
+                    teachercourse: '{{ request.session.uid }}',
 
                 }
             },
-            async created() {
-                console.log('start');
-
+            mounted() {
                 var vm = this;
 
-                await axios({
+                axios({
                     method: 'post',
                     url: '/teacher/course/getall/',
                     data: {
@@ -222,6 +233,10 @@
                 });
 
             },
+            async created() {
+
+
+            },
             computed: {
                 sortOptions() {
                     return this.fields
@@ -237,14 +252,21 @@
                     this.currentPageStudent = 1;
                 },
                 info(item, index, button) {
-                    console.log(item);
-                    this.modalInfo.title = `Row index: ${index}`;
+
+
+                    this.modalInfo.title = '';
                     this.modalInfo.content = JSON.stringify(item);
                     this.$root.$emit('bv::show::modal', 'modalInfo', button);
                 },
                 resetModal() {
+
                     this.modalInfo.title = '';
                     this.modalInfo.content = '';
+                    this.modalInfo.comment = '';
+                },
+                onSaveCommnetStudent(item) {
+                    console.log(JSON.parse(item).id, this.itemcourse,this.teachercourse);
+                    console.log(this.modalInfo.comment);
                 },
                 activate(el) {
                     this.active_el = el;
@@ -252,6 +274,8 @@
                 onShowDetail(itemid, namecourse) {
 
                     var vm = this;
+
+                    vm.itemcourse = itemid;
 
                     axios({
                         method: 'post',
@@ -275,7 +299,6 @@
                             console.log(vm.itemsstudentcourse);
                         }
                     });
-
 
                     vm.detailstudent = !vm.detailstudent;
                 },
