@@ -14,4 +14,9 @@ urlpatterns = [
     re_path('^teacher/student/getcomment/$', views.teachergetcomment, name='teachergetcomment'),
     # end evaluate student
 
+    #upload file
+    re_path('^teacher/course/loadsfile/$', views.teacherloadsfile, name='teacherloadsfile'),
+    re_path('^teacher/course/teacheruploadfilessub/$', views.teacheruploadfilessub, name='teacheruploadfilessub'),
+    re_path('^teacher/course/teacherdeletefile/$', views.teacherdeletefile, name='teacherdeletefile'),
+    #end upload file
 ]

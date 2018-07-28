@@ -207,9 +207,8 @@ class UploadFileUsers(models.Model):
     _id = models.ObjectIdField(primary_key=True)
     name = models.CharField(max_length=600)
     usersupload = models.CharField(max_length=300)
-    roleupload = models.CharField(max_length=300)
     coursecode = models.CharField(max_length=500)
-    contentfile = models.FilePathField(max_length=800)
+    contentfile = models.FileField(default=MEDIA_ROOT, upload_to='files/%Y/%m/%d/')
     comment = models.TextField(max_length=900)
     created = models.DateField(default=timezone.now, editable=True)
 
@@ -221,9 +220,8 @@ class UploadFileUsers(models.Model):
             "id": str(self.pk),
             "name": self.name,
             "usersupload": self.usersupload,
-            "roleupload": self.roleupload,
             "coursecode": self.coursecode,
-            "contentfile": self.contentfile,
+            "contentfile": str(self.contentfile),
             "comment": self.comment,
             "created": str(self.created)
         }

@@ -23,14 +23,6 @@
                         Khoá học tham gia </a>
                     <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==2 }" @click="activate(2)">
                         Tải tải liệu</a>
-                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==3 }" @click="activate(3)">
-                        Category 3</a>
-                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==4 }" @click="activate(4)">
-                        Category 3</a>
-                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==5 }" @click="activate(5)">
-                        Category 3</a>
-                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==6 }" @click="activate(6)">
-                        Category 3</a>
                 </div>
             </div>
             <!-- /.col-lg-3 -->
@@ -124,30 +116,59 @@
                 </div>
                 <!-- /.card -->
 
-                <div class="card card-outline-secondary my-4">
+                <div class="card card-outline-secondary my-4" v-if="!detailstudent">
                     <div class="card-header">
-                        Product Reviews
+                        Nội dung
                     </div>
                     <div class="card-body">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore,
-                            similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat
-                            laborum.
-                            Sequi mollitia, necessitatibus quae sint natus.</p>
-                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+
+                        <b-form-input
+                                type="text"
+                                v-model="nameuploadfile"
+                                required
+                                placeholder="Tiêu đề">
+                        </b-form-input>
+                        <b-form-file v-model="file" required :state="Boolean(file)"
+                                     accept=".csv,.pdf,.txt" @change="onFileChangeFiles"
+                                     placeholder="Choose a file..."></b-form-file>
+
+                        <b-form-textarea
+                                v-model="commentfile"
+                                placeholder="Nội dung bài"
+                                :rows="3"
+                                required
+                                :max-rows="6">
+                        </b-form-textarea>
+                        <b-button size="md" variant="primary" @click="uploadFilesU">
+                            <i class="fa fa-fw fa-cloud-upload"></i>
+                        </b-button>
+
                         <hr>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore,
-                            similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat
-                            laborum.
-                            Sequi mollitia, necessitatibus quae sint natus.</p>
-                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-                        <hr>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore,
-                            similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat
-                            laborum.
-                            Sequi mollitia, necessitatibus quae sint natus.</p>
-                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-                        <hr>
-                        <a href="#" class="btn btn-success">Leave a Review</a>
+
+                        <div class="row" style="height: 20rem; overflow-y: scroll;">
+                            <div class="col-md-12" v-if="listfilesupload.length" v-for="item in listfilesupload">
+                                <b-alert show variant="primary">
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <div>Tiêu đề : ${ item.name }</div>
+                                            <div>Tên : ${ item.namefile }</div>
+                                            <div>Nội dung : ${ item.comment }</div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <b-button size="md" variant="primary">
+                                                <i class="fa fa-fw fa-cloud-download"></i>
+                                            </b-button>
+                                        </div>
+                                    </div>
+
+                                </b-alert>
+                                <small class="text-muted">Ngày tạo ${ item.created }</small>
+                                <hr>
+                            </div>
+
+                        </div>
+
+
                     </div>
                 </div>
                 <!-- /.card -->
@@ -195,6 +216,11 @@
                     },
                     itemcourse: '',
                     teachercourse: '{{ request.session.uid }}',
+                    nameuploadfile: '',
+                    file: null,
+                    commentfile: '',
+                    listfilesupload: [],
+
 
                 }
             },
@@ -344,9 +370,95 @@
                     });
 
                     vm.detailstudent = !vm.detailstudent;
+
+                    axios({
+                        method: 'post',
+                        url: '/teacher/course/loadsfile/',
+                        data: {
+                            itemcourse: itemid
+                        },
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200 && response.data) {
+                            response.data.filter((val) => {
+                                val.created = moment(val.created).format("DD-MM-YYYY");
+                                var namefile = val.contentfile.split('/');
+                                namefile = namefile[namefile.length - 1];
+                                val.namefile = namefile;
+                                vm.listfilesupload.push(val);
+
+                                console.log(val);
+
+                            });
+                        }
+                    });
+
                 },
                 onShowDetailHide() {
                     this.detailstudent = !this.detailstudent;
+                },
+                onFileChangeFiles(e) {
+                    e.preventDefault();
+                    let files = e.target.files[0];
+                    let reader = new FileReader();
+                    var vm = this;
+                    if (files != null) {
+                        reader.readAsDataURL(files);
+                        reader.onload = e => {
+                            vm.contentfile = e.target.result;
+
+                        };
+
+                        vm.namefile = files.name;
+
+                    }
+
+                },
+                uploadFilesU(e) {
+                    e.preventDefault();
+                    var vm = this;
+
+                    var formData = new FormData();
+                    formData.append("coursecode", vm.itemcourse);
+                    formData.append("usersupload", vm.teachercourse);
+                    formData.append("name", vm.nameuploadfile);
+                    formData.append("contentfile", vm.file);
+                    formData.append("comment", vm.commentfile);
+
+                    axios({
+                        method: 'post',
+                        url: '/teacher/course/teacheruploadfilessub/',
+                        data: formData,
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/form-data; charset=UTF-8;',
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200 && response.data) {
+                            console.log(response.data);
+                            var val = response.data;
+
+                            val.created = moment(val.created).format("DD-MM-YYYY");
+                            var namefile = val.contentfile.split('/');
+                            namefile = namefile[namefile.length - 1];
+                            val.namefile = namefile;
+                            vm.listfilesupload.push(val);
+
+                            vm.nameuploadfile = '';
+                            vm.file = null;
+                            vm.commentfile = '';
+
+                        }
+                    });
+
+
                 }
             }
 

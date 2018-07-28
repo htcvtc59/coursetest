@@ -107,3 +107,55 @@ def teachergetcomment(request):
                 return HttpResponse(content="", content_type="application/json", status=200)
     except Exception:
         pass
+
+
+@ensure_csrf_cookie
+def teacheruploadfilessub(request):
+    try:
+        if request.method == 'POST':
+            coursecode = request.POST.get('coursecode')
+            usersupload = request.POST.get('usersupload')
+            name = request.POST.get('name')
+            contentfile = request.FILES['contentfile']
+            comment = request.POST.get('comment')
+
+            upload = UploadFileUsers(name=name, usersupload=usersupload, coursecode=coursecode,
+                                     contentfile=contentfile, comment=comment)
+            upload.save()
+
+            return HttpResponse(content=json.dumps(upload.getall()), content_type="application/json", status=200)
+    except Exception:
+        pass
+
+
+@ensure_csrf_cookie
+def teacherloadsfile(request):
+    try:
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            itemcourse = dict_keys.get('itemcourse')
+
+            upload = UploadFileUsers.objects.filter(coursecode=itemcourse).order_by("-created")
+            resupload = [val.getall() for val in upload]
+
+            return HttpResponse(content=json.dumps(resupload), content_type="application/json",
+                                status=200)
+    except Exception:
+        pass
+
+
+@ensure_csrf_cookie
+def teacherdeletefile(request):
+    try:
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            pk = dict_keys.get('pk')
+
+            upload = UploadFileUsers.objects.filter(pk=pk).first()
+            if upload:
+                upload.delete()
+                return HttpResponse(content="", content_type="application/json", status=200)
+            else:
+                return HttpResponse(content="", content_type="application/json", status=404)
+    except Exception:
+        pass
