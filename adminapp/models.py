@@ -226,6 +226,11 @@ class UploadFileUsers(models.Model):
             "created": str(self.created)
         }
 
+    def delete(self, *args, **kwargs):
+        storage, path = self.contentfile.storage, self.contentfile.path
+        super(UploadFileUsers, self).delete(*args, **kwargs)
+        storage.delete(path)
+
 
 # Upload file teacher
 

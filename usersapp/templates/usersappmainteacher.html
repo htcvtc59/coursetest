@@ -129,8 +129,8 @@
                                 placeholder="Tiêu đề">
                         </b-form-input>
                         <b-form-file v-model="file" required :state="Boolean(file)"
-                                     accept=".csv,.pdf,.txt" @change="onFileChangeFiles"
-                                     placeholder="Choose a file..."></b-form-file>
+                                     accept=".csv,.pdf,.txt"
+                                     placeholder="Chọn tài liệu..."></b-form-file>
 
                         <b-form-textarea
                                 v-model="commentfile"
@@ -146,7 +146,8 @@
                         <hr>
 
                         <div class="row" style="height: 20rem; overflow-y: scroll;">
-                            <div class="col-md-12" v-if="listfilesupload.length" v-for="item in listfilesupload">
+                            <div class="col-md-12" v-if="listfilesupload.length"
+                                 v-for="(item,index) in listfilesupload">
                                 <b-alert show variant="primary">
                                     <div class="row">
                                         <div class="col-md-10">
@@ -155,9 +156,15 @@
                                             <div>Nội dung : ${ item.comment }</div>
                                         </div>
                                         <div class="col-md-2">
-                                            <b-button size="md" variant="primary">
-                                                <i class="fa fa-fw fa-cloud-download"></i>
-                                            </b-button>
+                                            <b-button-group>
+                                                <b-button :href="`/media/${ item.contentfile }`" :download="`${ item.namefile }`" size="md" variant="primary">
+                                                    <i class="fa fa-fw fa-cloud-download"></i>
+                                                </b-button>
+                                                <b-button size="md" variant="danger"
+                                                          @click="onDeleteFiles(item.id,index)">
+                                                    <i class="fa fa-fw fa-times"></i>
+                                                </b-button>
+                                            </b-button-group>
                                         </div>
                                     </div>
 
@@ -347,6 +354,8 @@
 
                     vm.itemcourse = itemid;
 
+                    vm.itemsstudentcourse = [];
+
                     axios({
                         method: 'post',
                         url: '/app/appcourse/coursegetstudentin/',
@@ -371,6 +380,9 @@
 
                     vm.detailstudent = !vm.detailstudent;
 
+
+                    vm.listfilesupload = [];
+
                     axios({
                         method: 'post',
                         url: '/teacher/course/loadsfile/',
@@ -392,8 +404,6 @@
                                 val.namefile = namefile;
                                 vm.listfilesupload.push(val);
 
-                                console.log(val);
-
                             });
                         }
                     });
@@ -401,23 +411,6 @@
                 },
                 onShowDetailHide() {
                     this.detailstudent = !this.detailstudent;
-                },
-                onFileChangeFiles(e) {
-                    e.preventDefault();
-                    let files = e.target.files[0];
-                    let reader = new FileReader();
-                    var vm = this;
-                    if (files != null) {
-                        reader.readAsDataURL(files);
-                        reader.onload = e => {
-                            vm.contentfile = e.target.result;
-
-                        };
-
-                        vm.namefile = files.name;
-
-                    }
-
                 },
                 uploadFilesU(e) {
                     e.preventDefault();
@@ -459,6 +452,26 @@
                     });
 
 
+                },
+                onDeleteFiles(itemid, index) {
+                    var vm = this;
+                    axios({
+                        method: 'post',
+                        url: '/teacher/course/teacherdeletefile/',
+                        data: {
+                            pk: itemid
+                        },
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8;',
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200) {
+                            vm.listfilesupload.splice(index, 1);
+                        }
+                    });
                 }
             }
 
