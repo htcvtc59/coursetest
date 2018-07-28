@@ -226,8 +226,6 @@
                             val.enddate = moment(val.enddate).format("DD-MM-YYYY");
                         });
                         vm.totalRows = vm.items.length;
-                        console.log(vm.items);
-
 
                     }
                 });
@@ -252,11 +250,34 @@
                     this.currentPageStudent = 1;
                 },
                 info(item, index, button) {
+                    var vm = this;
+
+                    axios({
+                        method: 'post',
+                        url: '/teacher/student/getcomment/',
+                        data: {
+                            itemid: item.id,
+                            itemcourse: vm.itemcourse,
+                            teachercourse: vm.teachercourse
+                        },
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200 && response.data) {
+
+                            vm.modalInfo.comment = response.data.contentcomment;
+                        }
+                    });
+
+                    vm.modalInfo.title = '';
+                    vm.modalInfo.content = JSON.stringify(item);
+                    vm.$root.$emit('bv::show::modal', 'modalInfo', button);
 
 
-                    this.modalInfo.title = '';
-                    this.modalInfo.content = JSON.stringify(item);
-                    this.$root.$emit('bv::show::modal', 'modalInfo', button);
                 },
                 resetModal() {
 
@@ -265,8 +286,31 @@
                     this.modalInfo.comment = '';
                 },
                 onSaveCommnetStudent(item) {
-                    console.log(JSON.parse(item).id, this.itemcourse,this.teachercourse);
-                    console.log(this.modalInfo.comment);
+                    var vm = this;
+
+                    axios({
+                        method: 'post',
+                        url: '/teacher/student/evaluatestudent/',
+                        data: {
+                            itemid: JSON.parse(item).id,
+                            itemcourse: vm.itemcourse,
+                            teachercourse: vm.teachercourse,
+                            comment: vm.modalInfo.comment
+                        },
+                        xsrfCookieName: 'csrftoken',
+                        xsrfHeaderName: 'X-CSRFToken',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                    }).then(function (response) {
+                        if (response.status === 200) {
+
+                            vm.$root.$emit('bv::hide::modal', 'modalInfo');
+                        }
+                    });
+
+
                 },
                 activate(el) {
                     this.active_el = el;
@@ -296,7 +340,6 @@
                             vm.itemsstudentcourse = response.data;
                             vm.totalRowsStudent = vm.itemsstudentcourse.length;
 
-                            console.log(vm.itemsstudentcourse);
                         }
                     });
 

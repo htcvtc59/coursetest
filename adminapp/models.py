@@ -211,6 +211,7 @@ class UploadFileUsers(models.Model):
     coursecode = models.CharField(max_length=500)
     contentfile = models.FilePathField(max_length=800)
     comment = models.TextField(max_length=900)
+    created = models.DateField(default=timezone.now, editable=True)
 
     def __str__(self):
         return self.usersupload
@@ -223,7 +224,8 @@ class UploadFileUsers(models.Model):
             "roleupload": self.roleupload,
             "coursecode": self.coursecode,
             "contentfile": self.contentfile,
-            "comment": self.comment
+            "comment": self.comment,
+            "created": str(self.created)
         }
 
 

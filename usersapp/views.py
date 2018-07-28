@@ -19,7 +19,8 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from passlib.apps import custom_app_context as pwd_context
-from adminapp.models import SubCateCourse, CategoryCourse, Course, Student, UploadFileUsers, Teacher
+from adminapp.models import SubCateCourse, CategoryCourse, Course, \
+    EvaluateCommentUsers, Student, UploadFileUsers, Teacher
 import math
 
 
@@ -67,5 +68,42 @@ def teachercommentperstudent(request):
     try:
         if request.method == 'POST':
             dict_keys = dict(json.loads(request.body))
+            itemid = dict_keys.get('itemid')
+            itemcourse = dict_keys.get('itemcourse')
+            teachercourse = dict_keys.get('teachercourse')
+            comment = dict_keys.get('comment')
+
+            evaluate = EvaluateCommentUsers.objects.filter(userscomment=itemid, rolecomment=teachercourse,
+                                                           coursecomment=itemcourse).first()
+            if evaluate:
+                evaluate.contentcomment = comment
+                evaluate.save()
+            else:
+                evaluate = EvaluateCommentUsers(userscomment=itemid, rolecomment=teachercourse,
+                                                coursecomment=itemcourse, contentcomment=comment)
+                evaluate.save()
+
+            return HttpResponse(content="", content_type="application/json", status=200)
+    except Exception:
+        pass
+
+
+@ensure_csrf_cookie
+def teachergetcomment(request):
+    try:
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            itemid = dict_keys.get('itemid')
+            itemcourse = dict_keys.get('itemcourse')
+            teachercourse = dict_keys.get('teachercourse')
+
+            print(itemid, itemcourse, teachercourse)
+
+            evaluate = EvaluateCommentUsers.objects.filter(userscomment=itemid, rolecomment=teachercourse,
+                                                           coursecomment=itemcourse).first()
+            if evaluate:
+                return HttpResponse(content=json.dumps(evaluate.getall()), content_type="application/json", status=200)
+            else:
+                return HttpResponse(content="", content_type="application/json", status=200)
     except Exception:
         pass
