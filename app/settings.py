@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'adminapp',
     'usersapp',
     'import_export',
+    'django_jenkins'
 
 ]
 
