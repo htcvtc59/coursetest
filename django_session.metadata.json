@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"coursedb.django_session"},{"v":2,"unique":true,"key":{"session_key":1},"name":"__primary_key__","ns":"coursedb.django_session"},{"v":2,"key":{"expire_date":1},"name":"django_session_expire_date_a5c62663","ns":"coursedb.django_session"}],"uuid":"a2389c1a4a004d3590da508faeca6c67"}

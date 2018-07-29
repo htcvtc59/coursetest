@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"coursedb.signapp_account"},{"v":2,"unique":true,"key":{"name":1},"name":"name_1","ns":"coursedb.signapp_account"},{"v":2,"key":{"role_id":1},"name":"signapp_account_role_id_a3e98290","ns":"coursedb.signapp_account"}],"uuid":"e33dd63ec64f4aa7b52a00c30b160e3f"}
