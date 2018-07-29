@@ -25,6 +25,9 @@ class Role(models.Model):
     def __str__(self):
         return u'%s' % self.name
 
+    def __iter__(self):
+        return self
+
     def save(self, *args, **kwargs):
         for field_name in ['name']:
             val = getattr(self, field_name, False)
@@ -63,6 +66,9 @@ class Account(models.Model):
 
     def __str__(self):
         return u'%s' % self.name
+
+    def __iter__(self):
+        return self
 
     def save(self, *args, **kwargs):
         for field_name in ['password']:

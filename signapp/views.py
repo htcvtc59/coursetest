@@ -5,6 +5,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie, requires_csrf_token
 from django.http import HttpResponse
 from django.core.serializers import serialize
 import json
+from adminapp.models import Student
 
 from assets.validtoken import *
 
@@ -39,8 +40,13 @@ def signin(request):
                 request.session['token'] = createtoken(USERNAME, PASSWORD)
                 request.session['role'] = account.role.name
                 request.session['username'] = account.info.fullname
+                # add student info uid
+                studentinfouid = Student.objects.filter(accountcode=username).first()
+                if studentinfouid:
+                    request.session['studentinfouid'] = str(studentinfouid.pk)
+
                 return HttpResponse(content="signedstudent", content_type='application/json', status=200)
             else:
                 return HttpResponse(content="", content_type='application/json', status=200)
-    except (ValueError, Exception):
+    except Exception:
         pass

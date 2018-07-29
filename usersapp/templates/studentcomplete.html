@@ -3,7 +3,7 @@
 
 
 {% block title %}
-    Student
+    Course Complete
 
 {% endblock %}
 
@@ -11,7 +11,7 @@
 
     {% csrf_token %}
 
-    <div class="container" id="appstudentsitesimple">
+    <div class="container" id="studentsitecoursecomplete">
 
         <div class="row">
 
@@ -90,7 +90,8 @@
                                         </div>
                                         <div class="col-md-2">
                                             <b-button-group>
-                                                <b-button :href="`/media/${ item.contentfile }`" :download="`${ item.namefile }`" size="md" variant="primary">
+                                                <b-button :href="`/media/${ item.contentfile }`"
+                                                          :download="`${ item.namefile }`" size="md" variant="primary">
                                                     <i class="fa fa-fw fa-cloud-download"></i>
                                                 </b-button>
                                             </b-button-group>
@@ -107,6 +108,7 @@
                 </div>
                 <!-- /.card -->
 
+
             </div>
             <!-- /.col-lg-9 -->
 
@@ -117,7 +119,7 @@
     <script>
         new Vue({
             delimiters: ['${', '}'],
-            el: '#appstudentsitesimple',
+            el: '#studentsitecoursecomplete',
             data() {
                 return {
                     active_el: 1,
@@ -134,7 +136,7 @@
 
                 axios({
                     method: 'post',
-                    url: '/student/course/getallcourse/',
+                    url: '/student/course/studentgetallcoursecomplete/',
                     data: {
                         perPage: vm.perPage,
                         currentPage: vm.currentPage,
@@ -206,7 +208,6 @@
                 onShowDetailHide() {
                     this.detailshow = !this.detailshow;
                 }
-
             }
         });
     </script>

@@ -36,6 +36,9 @@ class Student(models.Model):
     def __str__(self):
         return u'%s' % self.fullname
 
+    def __iter__(self):
+        return self
+
     def delete(self, *args, **kwargs):
         for field_name in ['pk']:
             val = getattr(self, field_name, False)
@@ -136,6 +139,9 @@ class Course(models.Model):
     def __str__(self):
         return u'%s' % self.namecourse
 
+    def __iter__(self):
+        return self
+
     def save(self, *args, **kwargs):
         super(Course, self).save(*args, **kwargs)
 
@@ -145,7 +151,7 @@ class Course(models.Model):
         storage.delete(path)
 
     def getall(self):
-        if self.student:
+        if not self.student_id:
             return {
                 "id": str(self._id),
                 "namecourse": self.namecourse,
@@ -163,7 +169,7 @@ class Course(models.Model):
                 "enddate": str(self.enddate),
                 "imagecourse": str(self.imagecourse),
                 "teacher": self.teacher.getall(),
-                "student": [val.getall() for val in self.student]
+                "student": self.student_id
             }
 
     def getallc(self):
@@ -188,6 +194,9 @@ class EvaluateCommentUsers(models.Model):
 
     def __str__(self):
         return self.userscomment
+
+    def __iter__(self):
+        return self
 
     def getall(self):
         return {
@@ -214,6 +223,9 @@ class UploadFileUsers(models.Model):
 
     def __str__(self):
         return self.usersupload
+
+    def __iter__(self):
+        return self
 
     def getall(self):
         return {
@@ -244,6 +256,9 @@ class SubCateCourse(models.Model):
     def __str__(self):
         return self.namesubcourse
 
+    def __iter__(self):
+        return self
+
     class Meta:
         abstract = True
 
@@ -266,6 +281,9 @@ class CategoryCourse(models.Model):
 
     def __str__(self):
         return self.namecourse
+
+    def __iter__(self):
+        return self
 
     def getall(self):
         return {

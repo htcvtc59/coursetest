@@ -159,3 +159,52 @@ def teacherdeletefile(request):
                 return HttpResponse(content="", content_type="application/json", status=404)
     except Exception:
         pass
+
+
+# student
+@ensure_csrf_cookie
+def studentgetallcourse(request):
+    try:
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            perPage = dict_keys.get('perPage')
+            currentPage = dict_keys.get('currentPage')
+            uid = dict_keys.get('uid')
+            studentinfouid = dict_keys.get('studentinfouid')
+            offset = (currentPage - 1) * perPage
+            datenow = "%02d-%02d-%02d" % (datetime.now().year, datetime.now().month, datetime.now().day)
+            rescourse = Course.objects.filter(enddate__gte=datenow, student_id__exact=studentinfouid).order_by(
+                '-enddate', '-startdate')[
+                        offset:offset + perPage]
+            listcourse = [val.getallc() for val in rescourse]
+            return HttpResponse(content=json.dumps(listcourse), content_type="application/json", status=200)
+    except Exception:
+        pass
+
+
+@ensure_csrf_cookie
+def studentgetallcoursecomplete(request):
+    try:
+        if request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            perPage = dict_keys.get('perPage')
+            currentPage = dict_keys.get('currentPage')
+            uid = dict_keys.get('uid')
+            studentinfouid = dict_keys.get('studentinfouid')
+            offset = (currentPage - 1) * perPage
+            datenow = "%02d-%02d-%02d" % (datetime.now().year, datetime.now().month, datetime.now().day)
+            rescourse = Course.objects.filter(enddate__lt=datenow, student_id__exact=studentinfouid).order_by(
+                '-enddate', '-startdate')[
+                        offset:offset + perPage]
+            listcourse = [val.getallc() for val in rescourse]
+            return HttpResponse(content=json.dumps(listcourse), content_type="application/json", status=200)
+    except Exception:
+        pass
+
+def studentcomplete(request):
+    try:
+        if 'STUDENT' == request.session['role']:
+            return render(request, template_name='studentcomplete.html')
+    except Exception:
+        return render(request, template_name='index.html')
+# end student
