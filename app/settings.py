@@ -202,5 +202,4 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 JENKINS_TASKS = (
     'django_jenkins.tasks.run_pep8',
     'django_jenkins.tasks.run_pyflakes',
-    'django_jenkins.tasks.run_sloccount'
 )
