@@ -38,6 +38,8 @@ def adminbasecourse(request):
         elif request.session['role'] == 'ADMIN':
             return render(request, template_name='dashboard.html')
     except Exception:
+        request.session['uid'] = 'signout'
+        del request.session['uid']
         return render(request, template_name='index.html')
 
 
@@ -55,6 +57,8 @@ def adminbaseaccount(request):
         else:
             return render(request, template_name='index.html')
     except Exception:
+        request.session['uid'] = 'signout'
+        del request.session['uid']
         return render(request, template_name='index.html')
 
 
@@ -538,6 +542,8 @@ def adminbasestudents(request):
         else:
             return render(request, template_name='index.html')
     except Exception:
+        request.session['uid'] = 'signout'
+        del request.session['uid']
         return render(request, template_name='index.html')
 
 
