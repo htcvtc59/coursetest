@@ -6,7 +6,7 @@ google-oauth==1.0.1
 djangorestframework==3.8.2
 gunicorn==19.8.1
 virtualenv==16.0.0
-pycrypto==2.6.1
+
 passlib==1.7.1
 djangorestframework-jwt==1.11.0
 requests==2.19.1
