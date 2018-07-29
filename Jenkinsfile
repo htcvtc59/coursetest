@@ -14,10 +14,7 @@ node {
             sh 'pip3.6 install -r requirements.txt'
             sh 'python3.6 manage.py makemigrations'
             sh 'python3.6 manage.py migrate'
-            sh 'python3.6 manage.py test --testrunner=coursedb.tests.test_runners.NoDbTestRunner'
-
-        stage 'Deploy'
-            sh './deployment/deploy_prod.sh'
+            sh 'python3.6 manage.py test'
 
         stage 'Publish results'
             slackSend color: "good", message: "Build successful: `${env.JOB_NAME}#${env.BUILD_NUMBER}` <${env.BUILD_URL}|Open in Jenkins>"
