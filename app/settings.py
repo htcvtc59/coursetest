@@ -43,8 +43,7 @@ INSTALLED_APPS = [
     'signapp',
     'adminapp',
     'usersapp',
-    'import_export',
-    'django_jenkins'
+    'import_export'
 
 ]
 
