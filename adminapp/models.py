@@ -24,7 +24,7 @@ class Student(models.Model):
     birthday = models.DateField(default=timezone.now, editable=True)
     school = models.TextField()
     graduationtime = models.DateField(default=timezone.now, editable=True)
-    face = models.ImageField(default=MEDIA_ROOT, upload_to='student/%Y/%m/%d/')
+    face = models.ImageField(default='', upload_to='student/%Y/%m/%d/')
     email = models.EmailField(max_length=450)
     phone = models.CharField(max_length=100)
     coursecode = models.CharField(max_length=100, blank=True)
@@ -40,21 +40,27 @@ class Student(models.Model):
         return self
 
     def delete(self, *args, **kwargs):
-        for field_name in ['pk']:
-            val = getattr(self, field_name, False)
-            if val:
-                student = Student.objects.filter(pk=val).first()
-                storage, path = student.face.storage, student.face.path
-                storage.delete(path)
-        super(Student, self).delete(*args, **kwargs)
+        try:
+            for field_name in ['pk']:
+                val = getattr(self, field_name, False)
+                if val:
+                    student = Student.objects.filter(pk=val).first()
+                    storage, path = student.face.storage, student.face.path
+                    storage.delete(path)
+            super(Student, self).delete(*args, **kwargs)
+        except Exception:
+            pass
 
     def deleteimage(self, *args, **kwargs):
-        for field_name in ['pk']:
-            val = getattr(self, field_name, False)
-            if val:
-                student = Student.objects.filter(pk=val).first()
-                storage, path = student.face.storage, student.face.path
-                storage.delete(path)
+        try:
+            for field_name in ['pk']:
+                val = getattr(self, field_name, False)
+                if val:
+                    student = Student.objects.filter(pk=val).first()
+                    storage, path = student.face.storage, student.face.path
+                    storage.delete(path)
+        except Exception:
+            pass
 
     def saveupdate(self, *args, **kwargs):
         super(Student, self).save(*args, **kwargs)

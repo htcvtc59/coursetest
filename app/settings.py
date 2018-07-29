@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'errorsapp',
     'signapp',
     'adminapp',
-    'usersapp'
+    'usersapp',
+    'import_export',
 
 ]
 
@@ -194,3 +195,5 @@ MIDDLEWARE_CLASSES = (
 # https://warehouse.python.org/project/whitenoise/
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True

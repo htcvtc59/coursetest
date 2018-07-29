@@ -17,6 +17,9 @@ from passlib.apps import custom_app_context as pwd_context
 from adminapp.models import SubCateCourse, CategoryCourse, Course, Student, UploadFileUsers, Teacher
 import math
 
+from tablib import Dataset
+from adminapp.resources import StudentResource, AccountResource
+
 # Create your views here.
 
 headers = {
@@ -982,4 +985,33 @@ def coursegetstudentin(request):
                                 status=200)
     except Exception:
         pass
+
+
 # end course
+
+
+# import export file
+def studentimportfile(request):
+    try:
+        if request.method == 'POST':
+            dataset = Dataset()
+            new_student = request.FILES['file']
+            resnew_student = new_student.read()
+            resnew_student = resnew_student.decode('utf-8')
+            imported_data = dataset.load(resnew_student)
+            for val in imported_data.dict:
+                students = Student(fullname=val['fullname'], hometown=val['hometown'], birthday=val['birthday'],
+                                   school=val['school'],
+                                   graduationtime=val['graduationtime'], email=val['email'],
+                                   phone=val['phone'], accountcode=val['accountcode'])
+                students.save()
+
+        return HttpResponse(content="OK", content_type="application/json",
+                            status=200)
+    except Exception:
+        pass
+
+
+def studentexportfile(request):
+    pass
+# import export file
