@@ -11,10 +11,10 @@ node {
             slackSend color: "warning", message: "Started `${env.JOB_NAME}#${env.BUILD_NUMBER}`\n\n_The changes:_\n${lastChanges}"
 
         stage 'Test'
-            sh 'sudo pip3.6 install -r requirements.txt'
-            sh 'sudo python3.6 manage.py makemigrations'
-            sh 'sudo python3.6 manage.py migrate'
-            sh 'sudo python3.6 manage.py test --testrunner=testing.tests.test_runners.NoDbTestRunner'
+            sh 'pip3 install -r requirements.txt'
+            sh 'python3.6 manage.py makemigrations'
+            sh 'python3.6 manage.py migrate'
+            sh 'python3.6 manage.py test --testrunner=testing.tests.test_runners.NoDbTestRunner'
 
         stage 'Deploy'
             sh './deployment/deploy_prod.sh'
