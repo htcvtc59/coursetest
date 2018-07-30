@@ -49,7 +49,7 @@ class Student(models.Model):
                     storage.delete(path)
             super(Student, self).delete(*args, **kwargs)
         except Exception:
-            pass
+            super(Student, self).delete(*args, **kwargs)
 
     def deleteimage(self, *args, **kwargs):
         try:
