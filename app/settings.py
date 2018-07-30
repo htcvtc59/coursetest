@@ -132,7 +132,7 @@ USE_TZ = True
 STATIC_HOST = 'https://djangovue.tk' if not DEBUG else ''
 # STATIC_HOST = 'https://djangovue.tk' if not DEBUG else ''
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = '/home/htcvtc59/app/static/'
 STATIC_URL = STATIC_HOST + '/static/'
 #STATIC_URL = '/static/'
 
