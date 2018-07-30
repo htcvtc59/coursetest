@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'signapp',
     'adminapp',
     'usersapp',
-    'import_export'
+    'import_export',
+    'whitenoise.runserver_nostatic',
 
 ]
 
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -184,12 +186,6 @@ JWT_AUTH = {
     'JWT_AUTH_COOKIE': None,
 
 }
-
-MIDDLEWARE_CLASSES = (
-    # Simplified static file serving.
-    # https://warehouse.python.org/project/whitenoise/
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-)
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
