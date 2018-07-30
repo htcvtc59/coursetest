@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     'adminapp',
     'usersapp',
     'import_export',
-    'whitenoise.runserver_nostatic',
-
 ]
 
 MIDDLEWARE = [
@@ -56,7 +54,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -186,10 +183,5 @@ JWT_AUTH = {
     'JWT_AUTH_COOKIE': None,
 
 }
-
-# Simplified static file serving.
-# https://warehouse.python.org/project/whitenoise/
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
