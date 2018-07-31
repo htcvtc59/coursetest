@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.0.4 (Python 3.6.5 on darwin)" generated="20180731 20:57:47.121">
+<suite id="s1" name="Testcase" source="/Users/oh/Desktop/djangoCourse/TestRobot/Tests/testcase.robot">
+<test id="s1-t1" name="Create Account">
+<kw name="Open Browser" library="Selenium2Library">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>http://localhost:8000</arg>
+<arg>chrome</arg>
+</arguments>
+<msg timestamp="20180731 20:57:47.853" level="INFO">Opening browser 'chrome' to base url 'http://localhost:8000'.</msg>
+<status status="PASS" starttime="20180731 20:57:47.853" endtime="20180731 20:57:51.790"></status>
+</kw>
+<kw name="Wait Until Page Contains" library="Selenium2Library">
+<doc>Waits until ``text`` appears on current page.</doc>
+<arguments>
+<arg>Vui lòng đăng nhập!</arg>
+</arguments>
+<status status="PASS" starttime="20180731 20:57:51.791" endtime="20180731 20:57:51.819"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=__BVID__1</arg>
+<arg>admincourse</arg>
+</arguments>
+<msg timestamp="20180731 20:57:51.819" level="INFO">Typing text 'admincourse' into text field 'id=__BVID__1'.</msg>
+<status status="PASS" starttime="20180731 20:57:51.819" endtime="20180731 20:57:52.035"></status>
+</kw>
+<kw name="Input Password" library="Selenium2Library">
+<doc>Types the given password into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=__BVID__2</arg>
+<arg>admincourse</arg>
+</arguments>
+<msg timestamp="20180731 20:57:52.035" level="INFO">Typing password into text field 'id=__BVID__2'.</msg>
+<status status="PASS" starttime="20180731 20:57:52.035" endtime="20180731 20:57:52.192"></status>
+</kw>
+<kw name="Click Button" library="Selenium2Library">
+<doc>Clicks button identified by ``locator``.</doc>
+<arguments>
+<arg>xpath=//button[@type='submit']</arg>
+</arguments>
+<msg timestamp="20180731 20:57:52.193" level="INFO">Clicking button 'xpath=//button[@type='submit']'.</msg>
+<status status="PASS" starttime="20180731 20:57:52.192" endtime="20180731 20:57:52.333"></status>
+</kw>
+<kw name="Wait Until Page Contains" library="Selenium2Library">
+<doc>Waits until ``text`` appears on current page.</doc>
+<arguments>
+<arg>Đăng xuất</arg>
+</arguments>
+<status status="PASS" starttime="20180731 20:57:52.334" endtime="20180731 20:57:56.448"></status>
+</kw>
+<kw name="Go To" library="Selenium2Library">
+<doc>Navigates the active browser instance to the provided ``url``.</doc>
+<arguments>
+<arg>http://localhost:8000/app/users/</arg>
+</arguments>
+<msg timestamp="20180731 20:57:56.449" level="INFO">Opening url 'http://localhost:8000/app/users/'</msg>
+<status status="PASS" starttime="20180731 20:57:56.449" endtime="20180731 20:57:56.969"></status>
+</kw>
+<kw name="Wait Until Page Contains" library="Selenium2Library">
+<doc>Waits until ``text`` appears on current page.</doc>
+<arguments>
+<arg>Học viên</arg>
+</arguments>
+<status status="PASS" starttime="20180731 20:57:56.969" endtime="20180731 20:57:56.997"></status>
+</kw>
+<kw name="Click Button" library="Selenium2Library">
+<doc>Clicks button identified by ``locator``.</doc>
+<arguments>
+<arg>xpath=(//button[@type='button'])[3]</arg>
+</arguments>
+<msg timestamp="20180731 20:57:56.999" level="INFO">Clicking button 'xpath=(//button[@type='button'])[3]'.</msg>
+<status status="PASS" starttime="20180731 20:57:56.998" endtime="20180731 20:57:57.115"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=exstudent1</arg>
+<arg>hv1</arg>
+</arguments>
+<msg timestamp="20180731 20:57:57.116" level="INFO">Typing text 'hv1' into text field 'id=exstudent1'.</msg>
+<status status="PASS" starttime="20180731 20:57:57.116" endtime="20180731 20:57:57.287"></status>
+</kw>
+<kw name="Choose File" library="Selenium2Library">
+<doc>Inputs the ``file_path`` into file input field ``locator``.</doc>
+<arguments>
+<arg>id=exstudent2</arg>
+<arg>/Users/oh/Downloads/identicon.png</arg>
+</arguments>
+<status status="PASS" starttime="20180731 20:57:57.287" endtime="20180731 20:57:57.349"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=exstudent3</arg>
+<arg>Nguyễn Văn A</arg>
+</arguments>
+<msg timestamp="20180731 20:57:57.350" level="INFO">Typing text 'Nguyễn Văn A' into text field 'id=exstudent3'.</msg>
+<status status="PASS" starttime="20180731 20:57:57.349" endtime="20180731 20:57:57.709"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=exstudent4</arg>
+<arg>hs1@gmail.com</arg>
+</arguments>
+<msg timestamp="20180731 20:57:57.710" level="INFO">Typing text 'hs1@gmail.com' into text field 'id=exstudent4'.</msg>
+<status status="PASS" starttime="20180731 20:57:57.709" endtime="20180731 20:57:58.031"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=exstudent5</arg>
+<arg>1234</arg>
+</arguments>
+<msg timestamp="20180731 20:57:58.032" level="INFO">Typing text '1234' into text field 'id=exstudent5'.</msg>
+<status status="PASS" starttime="20180731 20:57:58.031" endtime="20180731 20:57:58.172"></status>
+</kw>
+<kw name="Click Element" library="Selenium2Library">
+<doc>Click element identified by ``locator``.</doc>
+<arguments>
+<arg>id=addnewstudent</arg>
+</arguments>
+<msg timestamp="20180731 20:57:58.173" level="INFO">Clicking element 'id=addnewstudent'.</msg>
+<status status="PASS" starttime="20180731 20:57:58.172" endtime="20180731 20:57:58.262"></status>
+</kw>
+<kw name="Wait Until Element Is Not Visible" library="Selenium2Library">
+<doc>Waits until element ``locator`` is not visible.</doc>
+<arguments>
+<arg>id=addnewstudent</arg>
+</arguments>
+<status status="PASS" starttime="20180731 20:57:58.263" endtime="20180731 20:57:59.832"></status>
+</kw>
+<kw name="Click Link" library="Selenium2Library">
+<doc>Clicks a link identified by ``locator``.</doc>
+<arguments>
+<arg>id=__BVID__28___BV_tab_button__</arg>
+</arguments>
+<msg timestamp="20180731 20:57:59.833" level="INFO">Clicking link 'id=__BVID__28___BV_tab_button__'.</msg>
+<status status="PASS" starttime="20180731 20:57:59.832" endtime="20180731 20:57:59.927"></status>
+</kw>
+<kw name="Click Button" library="Selenium2Library">
+<doc>Clicks button identified by ``locator``.</doc>
+<arguments>
+<arg>xpath=(//button[@type='button'])[9]</arg>
+</arguments>
+<msg timestamp="20180731 20:57:59.929" level="INFO">Clicking button 'xpath=(//button[@type='button'])[9]'.</msg>
+<status status="PASS" starttime="20180731 20:57:59.927" endtime="20180731 20:58:00.042"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=exampleInput1</arg>
+<arg>gv1</arg>
+</arguments>
+<msg timestamp="20180731 20:58:00.043" level="INFO">Typing text 'gv1' into text field 'id=exampleInput1'.</msg>
+<status status="PASS" starttime="20180731 20:58:00.042" endtime="20180731 20:58:00.186"></status>
+</kw>
+<kw name="Choose File" library="Selenium2Library">
+<doc>Inputs the ``file_path`` into file input field ``locator``.</doc>
+<arguments>
+<arg>id=exampleInput2</arg>
+<arg>/Users/oh/Downloads/identicon.png</arg>
+</arguments>
+<status status="PASS" starttime="20180731 20:58:00.187" endtime="20180731 20:58:00.226"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=exampleInput3</arg>
+<arg>Nguyễn Văn B</arg>
+</arguments>
+<msg timestamp="20180731 20:58:00.227" level="INFO">Typing text 'Nguyễn Văn B' into text field 'id=exampleInput3'.</msg>
+<status status="PASS" starttime="20180731 20:58:00.227" endtime="20180731 20:58:00.542"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=exampleInput4</arg>
+<arg>gv1@gmail.com</arg>
+</arguments>
+<msg timestamp="20180731 20:58:00.545" level="INFO">Typing text 'gv1@gmail.com' into text field 'id=exampleInput4'.</msg>
+<status status="PASS" starttime="20180731 20:58:00.543" endtime="20180731 20:58:00.820"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=exampleInput5</arg>
+<arg>1234</arg>
+</arguments>
+<msg timestamp="20180731 20:58:00.821" level="INFO">Typing text '1234' into text field 'id=exampleInput5'.</msg>
+<status status="PASS" starttime="20180731 20:58:00.820" endtime="20180731 20:58:00.950"></status>
+</kw>
+<kw name="Click Element" library="Selenium2Library">
+<doc>Click element identified by ``locator``.</doc>
+<arguments>
+<arg>id=addnewteacher</arg>
+</arguments>
+<msg timestamp="20180731 20:58:00.951" level="INFO">Clicking element 'id=addnewteacher'.</msg>
+<status status="PASS" starttime="20180731 20:58:00.951" endtime="20180731 20:58:01.043"></status>
+</kw>
+<kw name="Wait Until Element Is Not Visible" library="Selenium2Library">
+<doc>Waits until element ``locator`` is not visible.</doc>
+<arguments>
+<arg>id=addnewteacher</arg>
+</arguments>
+<status status="PASS" starttime="20180731 20:58:01.044" endtime="20180731 20:58:02.607"></status>
+</kw>
+<kw name="Click Element" library="Selenium2Library">
+<doc>Click element identified by ``locator``.</doc>
+<arguments>
+<arg>//table[@id='dataTableTeacher']/tbody/tr/td[2]</arg>
+</arguments>
+<msg timestamp="20180731 20:58:02.608" level="INFO">Clicking element '//table[@id='dataTableTeacher']/tbody/tr/td[2]'.</msg>
+<status status="PASS" starttime="20180731 20:58:02.607" endtime="20180731 20:58:02.716"></status>
+</kw>
+<kw name="Click Button" library="Selenium2Library">
+<doc>Clicks button identified by ``locator``.</doc>
+<arguments>
+<arg>id=vdeleteteacherbtn</arg>
+</arguments>
+<msg timestamp="20180731 20:58:02.716" level="INFO">Clicking button 'id=vdeleteteacherbtn'.</msg>
+<status status="PASS" starttime="20180731 20:58:02.716" endtime="20180731 20:58:02.836"></status>
+</kw>
+<kw name="Wait Until Element Is Not Visible" library="Selenium2Library">
+<doc>Waits until element ``locator`` is not visible.</doc>
+<arguments>
+<arg>id=vdeleteteacherbtn</arg>
+</arguments>
+<status status="PASS" starttime="20180731 20:58:02.837" endtime="20180731 20:58:02.867"></status>
+</kw>
+<kw name="Go To" library="Selenium2Library">
+<doc>Navigates the active browser instance to the provided ``url``.</doc>
+<arguments>
+<arg>http://localhost:8000/app/users/</arg>
+</arguments>
+<msg timestamp="20180731 20:58:02.868" level="INFO">Opening url 'http://localhost:8000/app/users/'</msg>
+<status status="PASS" starttime="20180731 20:58:02.868" endtime="20180731 20:58:03.308"></status>
+</kw>
+<kw name="Click Element" library="Selenium2Library">
+<doc>Click element identified by ``locator``.</doc>
+<arguments>
+<arg>//table[@id='dataTableStudent']/tbody/tr/td[3]</arg>
+</arguments>
+<msg timestamp="20180731 20:58:03.310" level="INFO">Clicking element '//table[@id='dataTableStudent']/tbody/tr/td[3]'.</msg>
+<status status="PASS" starttime="20180731 20:58:03.310" endtime="20180731 20:58:03.539"></status>
+</kw>
+<kw name="Click Button" library="Selenium2Library">
+<doc>Clicks button identified by ``locator``.</doc>
+<arguments>
+<arg>id=vdeletestudentbtn</arg>
+</arguments>
+<msg timestamp="20180731 20:58:03.540" level="INFO">Clicking button 'id=vdeletestudentbtn'.</msg>
+<status status="PASS" starttime="20180731 20:58:03.539" endtime="20180731 20:58:03.661"></status>
+</kw>
+<kw name="Wait Until Element Is Not Visible" library="Selenium2Library">
+<doc>Waits until element ``locator`` is not visible.</doc>
+<arguments>
+<arg>id=vdeletestudentbtn</arg>
+</arguments>
+<status status="PASS" starttime="20180731 20:58:03.662" endtime="20180731 20:58:03.693"></status>
+</kw>
+<kw name="Go To" library="Selenium2Library">
+<doc>Navigates the active browser instance to the provided ``url``.</doc>
+<arguments>
+<arg>http://localhost:8000/app/users/</arg>
+</arguments>
+<msg timestamp="20180731 20:58:03.694" level="INFO">Opening url 'http://localhost:8000/app/users/'</msg>
+<status status="PASS" starttime="20180731 20:58:03.694" endtime="20180731 20:58:04.731"></status>
+</kw>
+<kw name="Wait Until Page Contains" library="Selenium2Library">
+<doc>Waits until ``text`` appears on current page.</doc>
+<arguments>
+<arg>Đăng xuất</arg>
+</arguments>
+<status status="PASS" starttime="20180731 20:58:04.732" endtime="20180731 20:58:04.756"></status>
+</kw>
+<kw name="Click Link" library="Selenium2Library">
+<doc>Clicks a link identified by ``locator``.</doc>
+<arguments>
+<arg>Đăng xuất</arg>
+</arguments>
+<msg timestamp="20180731 20:58:04.757" level="INFO">Clicking link 'Đăng xuất'.</msg>
+<status status="PASS" starttime="20180731 20:58:04.757" endtime="20180731 20:58:05.574"></status>
+</kw>
+<kw name="Close Browser" library="Selenium2Library">
+<doc>Closes the current browser.</doc>
+<status status="PASS" starttime="20180731 20:58:05.574" endtime="20180731 20:58:05.668"></status>
+</kw>
+<status status="PASS" starttime="20180731 20:57:47.851" endtime="20180731 20:58:05.669" critical="yes"></status>
+</test>
+<status status="PASS" starttime="20180731 20:57:47.126" endtime="20180731 20:58:05.671"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0">Critical Tests</stat>
+<stat pass="1" fail="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" id="s1" name="Testcase">Testcase</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20180731 20:57:47.100" level="ERROR">Error in file '/Users/oh/Desktop/djangoCourse/TestRobot/Tests/testcase.robot': Setting 'Documentation' used multiple times.</msg>
+</errors>
+</robot>
