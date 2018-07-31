@@ -23,7 +23,6 @@ Valid Login
     close browser
 
 Create Account
-    [Documentation]
     open browser                        http://localhost:8000   chrome
     wait until page contains            Vui lòng đăng nhập!
     input text                          id=__BVID__1         admincourse
