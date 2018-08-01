@@ -132,7 +132,12 @@
                                     <td>{{ s.birthday }}</td>
                                     <td>{{ s.school }}</td>
                                     <td>{{ s.graduationtime }}</td>
-                                    <td><img src="/media/{{ s.face }}" height="50" width="50"></td>
+                                    {% if s.face %}
+                                        <td><img src="/media/{{ s.face }}" height="50" width="50"></td>
+                                    {% else %}
+                                        <td><img src="/media/identicon.png" height="50" width="50"></td>
+                                    {% endif %}
+
                                     <td>{{ s.email }}</td>
                                     <td>{{ s.phone }}</td>
                                     <td>{{ s.createdate }}</td>

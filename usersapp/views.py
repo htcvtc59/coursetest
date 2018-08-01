@@ -49,7 +49,7 @@ def teachergetallcourse(request):
             offset = (currentPage - 1) * perPage
 
             datenow = "%02d-%02d-%02d" % (datetime.now().year, datetime.now().month, datetime.now().day)
-            rescourse = Course.objects.filter(enddate__gte=datenow, startdate__lt=datenow).order_by('-enddate',
+            rescourse = Course.objects.filter(enddate__gte=datenow, startdate__lte=datenow).order_by('-enddate',
                                                                                                     '-startdate')[
                         offset:offset + perPage]
             listcourse = []

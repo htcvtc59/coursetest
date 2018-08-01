@@ -946,7 +946,8 @@ def coursegetinfosub(request, subname, info):
         if request.method == 'GET':
             if request.session['role'] == 'ADMIN':
                 course = Course.objects.filter(pk=info).first()
-                datastudentinfo = requests.get('http://localhost:8000/app/appstudentinfo/getall/', headers=headers)
+                headers['Authorization'] = "JWT %s" % dict(request.session['token'])['token']
+                datastudentinfo = requests.get('http://127.0.0.1:8000/app/appstudentinfo/getall/', headers=headers)
                 return render(request=request, template_name='coursedetail.html',
                               context={"categorycourse": subname, "infoc": info, "datacourse": course.getall(),
                                        "datastudentinfo": datastudentinfo.json(), "location": "sub"})
@@ -962,7 +963,8 @@ def coursegetinforoot(request, rootname, info):
         if request.method == 'GET':
             if request.session['role'] == 'ADMIN':
                 course = Course.objects.filter(pk=info).first()
-                datastudentinfo = requests.get('http://localhost:8000/app/appstudentinfo/getall/', headers=headers)
+                headers['Authorization'] = "JWT %s" % dict(request.session['token'])['token']
+                datastudentinfo = requests.get('http://127.0.0.1:8000/app/appstudentinfo/getall/', headers=headers)
                 return render(request=request, template_name='coursedetail.html',
                               context={"categorycourse": rootname, "infoc": info, "datacourse": course.getall(),
                                        "datastudentinfo": datastudentinfo.json(), "location": "root"})
