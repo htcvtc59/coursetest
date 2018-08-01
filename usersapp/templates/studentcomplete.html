@@ -21,13 +21,9 @@
                     <a href="{% url 'usersappsigninstudent' %}" class="list-group-item"
                        v-bind:class="{ 'active' : active_el==1 }"
                        @click="activate(1)">Các khoá học</a>
-                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==2 }"
-                       @click="activate(2)">Tài liệu chung</a>
                     <a href="{% url 'studentcomplete' %}" class="list-group-item"
                        v-bind:class="{ 'active' : active_el==3 }"
                        @click="activate(3)">Khoá học hoàn thành</a>
-                    <a href="#" class="list-group-item" v-bind:class="{ 'active' : active_el==4 }"
-                       @click="activate(4)">Kết quả</a>
                 </div>
             </div>
             <!-- /.col-lg-3 -->
@@ -48,7 +44,7 @@
                                         <h5 class="card-title">${ item.namecourse }</h5>
                                         <h6 class="card-subtitle mb-2 text-muted">${ item.startdate } - ${ item.enddate
                                             }</h6>
-                                        <p class="card-text"></p>
+                                        <p class="card-text text-success">Hoàn thành</p>
                                         <a href="#" class="btn btn-primary"
                                            @click="onShowDetail(item.id,item.namecourse)">Chi
                                             tiết</a>
