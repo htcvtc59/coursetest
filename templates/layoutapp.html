@@ -16,7 +16,7 @@
     <!-- Bootstrap core CSS-->
     <link href="{% static 'assest/adminsb/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- Custom fonts for this template-->
-    <link href="{% static 'assest/adminsb/vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet"
+    <link href="{% static 'assest/adminsb/vendor/font-awesome/css/font-awesome.css' %}" rel="stylesheet"
           type="text/css">
     <!-- Page level plugin CSS-->
     <link href="{% static 'assest/adminsb/vendor/datatables/dataTables.bootstrap4.css' %}" rel="stylesheet">
@@ -95,7 +95,7 @@
 
             <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Danh sách học viên">
                 <a class="nav-link" href="{% url 'adminbasestudents' %}">
-                    <i class="fa fa-fw fa-american-sign-language-interpreting"></i>
+                    <i class="fa fa-fw fa-users"></i>
                     <span class="nav-link-text">Danh sách học viên</span>
                 </a>
             </li>
@@ -149,6 +149,13 @@
                 <a class="nav-link" href="{% url 'appcategory' %}">
                     <i class="fa fa-fw fa-align-left"></i>
                     <span class="nav-link-text">Quản lý danh mục</span>
+                </a>
+            </li>
+
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Báo cáo">
+                <a class="nav-link" href="#">
+                    <i class="fa fa-fw fas fa-clipboard"></i>
+                    <span class="nav-link-text">Báo cáo</span>
                 </a>
             </li>
 

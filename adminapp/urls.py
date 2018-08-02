@@ -51,11 +51,13 @@ urlpatterns = [
     re_path('^app/appcourse/update/$', views.updatecourse, name='updatecourse'),
     # end course
 
-    #import export file student
-
+    # import export file student
     re_path('^app/student/importfile/$', views.studentimportfile, name='studentimportfile'),
     re_path('^app/student/exportfile/$', views.studentexportfile, name='studentexportfile'),
+    # import export file student
 
-    #import export file student
-
+    # reports
+    re_path('^app/dash/reportdashboard/$', views.reportdashboard, name='reportdashboard'),
+    re_path('^app/dash/reportdashboardchart/$', views.reportdashboardchart, name='reportdashboardchart'),
+    # end reports
 ]

@@ -16,7 +16,7 @@ from django.conf import settings
 from passlib.apps import custom_app_context as pwd_context
 from adminapp.models import SubCateCourse, CategoryCourse, Course, Student, UploadFileUsers, Teacher
 import math
-
+import calendar
 from tablib import Dataset
 from adminapp.resources import StudentResource, AccountResource
 
@@ -1022,4 +1022,42 @@ def studentimportfile(request):
 
 def studentexportfile(request):
     pass
+
+
 # import export file
+
+# reports
+def reportdashboard(request):
+    try:
+        if request.method == 'POST':
+            totalcourse = Course.objects.all().count()
+            totalstudent = Student.objects.all().count()
+            res = json.dumps({"totalcourse": totalcourse, "totalstudent": totalstudent})
+
+            return HttpResponse(content=res, content_type="application/json",
+                                status=200)
+    except Exception:
+        pass
+
+
+from adminapp.models import SubCateCourse, CategoryCourse, Course, Student, UploadFileUsers, Teacher
+from django.db.models import Avg, Count
+from django.core.serializers import serialize
+
+
+def reportdashboardchart(request):
+    try:
+        if request.method == 'POST':
+            datetimenow = datetime.now()
+            beginmonth = '%02d-%02d-%02d' % (datetimenow.year, datetimenow.month, 1)
+            enddayofmonth = calendar.monthrange(datetimenow.year, datetimenow.month)[1]
+            endmonth = '%02d-%02d-%02d' % (datetimenow.year, datetimenow.month, enddayofmonth)
+            course = Course.objects.filter(createdate__gte=beginmonth, createdate__lte=endmonth) \
+                .values("createdate").annotate(Count("pk")).order_by("createdate")
+            datares = [{"create": str(dict(val)['createdate']), "count": dict(val)['pk__count']} for val in course]
+
+            return HttpResponse(content=json.dumps(datares), content_type="application/json",
+                                status=200)
+    except Exception:
+        pass
+# end reports

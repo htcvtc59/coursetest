@@ -188,6 +188,11 @@ class Course(models.Model):
             "teacher": self.teacher.getall()
         }
 
+    def getallchart(self):
+        return {
+            "createdate": str(self.createdate)
+        }
+
 
 # Comment teacher and student
 
