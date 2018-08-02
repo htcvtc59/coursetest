@@ -10,6 +10,45 @@
 {% block usersapp %}
 
     {% csrf_token %}
+    <script src="{% static 'vue/vue-carousel-3d.min.js' %}"></script>
+    <style>
+        .carousel-3d-container figure {
+            margin: 0;
+
+        }
+
+        .carousel-3d-slide {
+            padding: 20px;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            bottom: 0;
+            position: absolute;
+            bottom: 0;
+            padding: 15px;
+            font-size: 12px;
+            min-width: 100%;
+            box-sizing: border-box;
+
+        }
+
+        .title {
+            font-size: 22px;
+        }
+
+        .carousel-3d-container figcaption {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            bottom: 0;
+            position: absolute;
+            bottom: 0;
+            padding: 15px;
+            font-size: 12px;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
 
     <div class="container" id="appstudentsitesimple">
 
@@ -86,7 +125,8 @@
                                         </div>
                                         <div class="col-md-2">
                                             <b-button-group>
-                                                <b-button :href="`/media/${ item.contentfile }`" :download="`${ item.namefile }`" size="md" variant="primary">
+                                                <b-button :href="`/media/${ item.contentfile }`"
+                                                          :download="`${ item.namefile }`" size="md" variant="primary">
                                                     <i class="fa fa-fw fa-cloud-download"></i>
                                                 </b-button>
                                             </b-button-group>
@@ -103,6 +143,24 @@
                 </div>
                 <!-- /.card -->
 
+                <div class="row" v-if="listfuture.length">
+                    <div class="col-md-12">
+                        <carousel-3d :controls-visible="true" :clickable="false" :count="listfuture.length">
+                            <slide v-for="(item, i) in listfuture" :index="i">
+                                <h4>${ item.namecourse }</h4>
+                                <figure>
+                                    <img :src="`/media/${ item.imagecourse }`">
+
+                                    <figcaption>
+                                        <h6>${ item.startdate } - ${ item.enddate }</h6>
+                                        <h5>Giảng viên hỗ trợ ${ item.teacher.fullname }</h5>
+                                    </figcaption>
+                                </figure>
+                            </slide>
+                        </carousel-3d>
+                    </div>
+
+                </div>
             </div>
             <!-- /.col-lg-9 -->
 
@@ -122,13 +180,24 @@
                     currentPage: 1,
                     items: [],
                     detailshow: true,
-                    listfilesupload: []
+                    listfilesupload: [],
+                    listcare: [],
+                    listfuture: [],
                 }
             },
+            components: {
+                'carousel-3d': Carousel3d.Carousel3d,
+                'slide': Carousel3d.Slide
+            },
             mounted() {
+
+
+            },
+            async created() {
+
                 var vm = this;
 
-                axios({
+                await axios({
                     method: 'post',
                     url: '/student/course/getallcourse/',
                     data: {
@@ -147,7 +216,9 @@
                     },
                 }).then(function (response) {
                     if (response.status === 200 && response.data) {
-                        vm.items = response.data;
+                        vm.items = response.data.listcourse;
+
+                        vm.listcare = response.data.listcategorycourse;
 
                         vm.items.filter((val, index) => {
                             val.startdate = moment(val.startdate).format("DD-MM-YYYY");
@@ -155,14 +226,35 @@
                         });
                         vm.totalRows = vm.items.length;
 
+
                     }
                 });
 
-                console.log(vm.items);
+                await axios({
+                    method: 'post',
+                    url: '/student/course/studentgetcoursefuture/',
+                    data: {
+                        listcare: vm.listcare
+                    },
+                    xsrfCookieName: 'csrftoken',
+                    xsrfHeaderName: 'X-CSRFToken',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'Authorization': 'JWT {{ request.session.token.token }}'
+                    },
+                }).then(function (response) {
+                    if (response.status === 200 && response.data) {
 
+                        vm.listfuture = response.data;
+                        vm.listfuture.filter((val, index) => {
+                            val.startdate = moment(val.startdate).format("DD-MM-YYYY");
+                            val.enddate = moment(val.enddate).format("DD-MM-YYYY");
+                        });
 
-            },
-            created() {
+                    }
+                });
+
 
             },
             methods: {
@@ -205,7 +297,8 @@
                     this.detailshow = !this.detailshow;
                 }
 
-            }
+            },
+
         });
     </script>
 {% endblock %}

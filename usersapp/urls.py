@@ -25,6 +25,6 @@ urlpatterns = [
     re_path('^student/complete/$', views.studentcomplete, name='studentcomplete'),
     re_path('^student/course/studentgetallcoursecomplete/$', views.studentgetallcoursecomplete,
             name='studentgetallcoursecomplete'),
-
+    re_path('^student/course/studentgetcoursefuture/$', views.studentgetcoursefuture, name='studentgetcoursefuture'),
     # end student
 ]

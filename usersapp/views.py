@@ -22,6 +22,7 @@ from passlib.apps import custom_app_context as pwd_context
 from adminapp.models import SubCateCourse, CategoryCourse, Course, \
     EvaluateCommentUsers, Student, UploadFileUsers, Teacher
 import math
+from django.db.models import Avg, Count, Sum
 
 
 # Create your views here.
@@ -50,7 +51,7 @@ def teachergetallcourse(request):
 
             datenow = "%02d-%02d-%02d" % (datetime.now().year, datetime.now().month, datetime.now().day)
             rescourse = Course.objects.filter(enddate__gte=datenow, startdate__lte=datenow).order_by('-enddate',
-                                                                                                    '-startdate')[
+                                                                                                     '-startdate')[
                         offset:offset + perPage]
             listcourse = []
             for val in rescourse:
@@ -176,8 +177,19 @@ def studentgetallcourse(request):
             rescourse = Course.objects.filter(enddate__gte=datenow, student_id__exact=studentinfouid).order_by(
                 '-enddate', '-startdate')[
                         offset:offset + perPage]
+
+            rescourseall = Course.objects.filter(enddate__gte=datenow,
+                                                 student_id__exact=studentinfouid).order_by(
+                '-enddate', '-startdate')
+
             listcourse = [val.getallc() for val in rescourse]
-            return HttpResponse(content=json.dumps(listcourse), content_type="application/json", status=200)
+
+            listcategorycourse = [dict(val)['categorycourse'] for val in
+                                  rescourseall.values("categorycourse").annotate(Count('categorycourse')).order_by(
+                                      '-categorycourse')]
+            return HttpResponse(
+                content=json.dumps({"listcourse": listcourse, "listcategorycourse": listcategorycourse}),
+                content_type="application/json", status=200)
     except Exception:
         pass
 
@@ -201,6 +213,7 @@ def studentgetallcoursecomplete(request):
     except Exception:
         pass
 
+
 def studentcomplete(request):
     try:
         if 'STUDENT' == request.session['role']:
@@ -209,5 +222,21 @@ def studentcomplete(request):
         return render(request, template_name='index.html')
 
 
+def studentgetcoursefuture(request):
+    try:
+        if 'STUDENT' == request.session['role'] and request.method == 'POST':
+            dict_keys = dict(json.loads(request.body))
+            listcare = dict_keys.get('listcare')
+            print(listcare)
+            datenow = "%02d-%02d-%02d" % (datetime.now().year, datetime.now().month, datetime.now().day)
+
+            listres = []
+            for val in listcare:
+                for v in Course.objects.filter(startdate__gt=datenow, categorycourse=val):
+                    listres.append(v.getallc())
+
+            return HttpResponse(content=json.dumps(listres), content_type="application/json", status=200)
+    except Exception:
+        pass
 
 # end student
