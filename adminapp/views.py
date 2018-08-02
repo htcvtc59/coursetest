@@ -17,6 +17,7 @@ from passlib.apps import custom_app_context as pwd_context
 from adminapp.models import SubCateCourse, CategoryCourse, Course, Student, UploadFileUsers, Teacher
 import math
 import calendar
+from django.db.models import Avg, Count
 from tablib import Dataset
 from adminapp.resources import StudentResource, AccountResource
 
@@ -1038,11 +1039,6 @@ def reportdashboard(request):
                                 status=200)
     except Exception:
         pass
-
-
-from adminapp.models import SubCateCourse, CategoryCourse, Course, Student, UploadFileUsers, Teacher
-from django.db.models import Avg, Count
-from django.core.serializers import serialize
 
 
 def reportdashboardchart(request):

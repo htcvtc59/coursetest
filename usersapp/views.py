@@ -207,4 +207,7 @@ def studentcomplete(request):
             return render(request, template_name='studentcomplete.html')
     except Exception:
         return render(request, template_name='index.html')
+
+
+
 # end student
