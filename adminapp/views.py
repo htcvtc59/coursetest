@@ -907,8 +907,8 @@ def coursegetallsearch(request):
                     totaldata = Course.objects.filter(categorycourse__contains=namecourse,
                                                       namecourse__contains=namesearch).count()
                     rescourse = Course.objects.filter(categorycourse__contains=namecourse,
-                                                      namecourse__contains=namesearch).order_by('-enddate',
-                                                                                                '-startdate')[
+                                                      namecourse__contains=namesearch).order_by('-startdate',
+                                                                                                'enddate')[
                                 offset:offset + perpage]
                     datalist = [val.getall() for val in rescourse]
                     result = json.dumps({"total": totaldata, "data": datalist})
@@ -916,8 +916,8 @@ def coursegetallsearch(request):
                 elif Course.objects.filter(categorycourse__contains=namecourse).count() > 0 \
                         and str(namesearch).__len__() == 0:
                     totaldata = Course.objects.filter(categorycourse__contains=namecourse).count()
-                    rescourse = Course.objects.filter(categorycourse__contains=namecourse).order_by('-enddate',
-                                                                                                    '-startdate')[
+                    rescourse = Course.objects.filter(categorycourse__contains=namecourse).order_by('-startdate',
+                                                                                                    'enddate')[
                                 offset:offset + perpage]
                     datalist = [val.getall() for val in rescourse]
                     result = json.dumps({"total": totaldata, "data": datalist})
@@ -932,7 +932,7 @@ def coursegetallsearch(request):
                 rescourse = Course.objects.filter(categorycourse__contains=namecourse,
                                                   namecourse__contains=namesearch,
                                                   startdate__gte=startdate,
-                                                  enddate__lte=enddate).order_by('-enddate', '-startdate')[
+                                                  enddate__lte=enddate).order_by('-startdate', 'enddate')[
                             offset:offset + perpage]
                 datalist = [val.getall() for val in rescourse]
                 result = json.dumps({"total": totaldata, "data": datalist})
