@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '3d@!jzbg#w5_q8$qwk6&u4e72-fjcex7&o*#1+l$6#uq4mr3x0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -86,10 +86,10 @@ DATABASES = {
         'ENGINE': 'djongo',
         'ENFORCE_SCHEMA': True,
         'NAME': 'coursedb',
-        'HOST': '127.0.0.1',
-        'PORT': 27017,
-        'USER': '',
-        'PASSWORD': ''
+        'HOST': 'ds153947.mlab.com',
+        'PORT': 53947,
+        'USER': 'htcvtc59',
+        'PASSWORD': 'GTj5xX7Z'
     }
 }
 
