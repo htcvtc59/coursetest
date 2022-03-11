@@ -11,7 +11,7 @@ passlib==1.7.1
 djangorestframework-jwt==1.11.0
 requests==2.19.1
 whitenoise==3.3.1
-Pillow==5.1.0
+Pillow==9.0.1
 opencv-python==3.4.1.15
 opencv-contrib-python==3.4.1.15
 django-import-export==1.0.1
